@@ -1,0 +1,387 @@
+{
+    "intents": [
+      {
+        "intent": "Su Kesintisi",
+        "examples": [
+          "Mahallemde su kesintisi var mı?",
+          "Sular ne zaman gelecek?",
+          "Su kesintisi hakkında bilgi verir misiniz?"
+        ],
+        "responses": [
+          "Şu anda mahallenizde bir su kesintisi planlanmamaktadır.",
+          "Bugün saat 14:00'te su geri gelecektir.",
+          "Bölgenizde planlı bir su kesintisi bulunmaktadır."
+        ]
+      },
+      {
+        "intent": "Fatura İtirazı",
+        "examples": [
+          "Faturamda hata var, ne yapmalıyım?",
+          "Fatura tutarım yanlış, nasıl itiraz ederim?",
+          "Faturamı inceletmek istiyorum."
+        ],
+        "responses": [
+          "Faturanızla ilgili itirazda bulunmak için müşteri hizmetlerimize başvurabilirsiniz.",
+          "Fatura itirazı için online formu doldurabilirsiniz.",
+          "Faturanızın detaylı incelemesi yapılacaktır."
+        ]
+      },
+      {
+        "intent": "Sayaç",
+        "examples": [
+          "Su sayacım çalışmıyor."
+          
+        ],
+        "responses": [
+          "Gerekli birimlere haber verildi"
+        ]
+      },
+      {
+        "intent": "Katılım Bedeli",
+        "examples": [
+            "Su ve kanalizasyon bedelleri neye göre alınıyor?",
+            "Su ve kanalizasyon bedelleri neye göre hesaplanıyor?"
+        ],
+        "responses": [
+          "KOSKİ Tarifeler Yönetmeliğinin 18/1 maddesinde belirtilen “2464 sayılı Belediye Gelirleri Kanunu’nun 87. 88 ve 89. maddeleri gereğince tahsil edilecek katılım payları, Genel Kurul tarafından belirlenir.” şeklindeki hükme göre alınmaktadır. Ayrıntı KOSKİ WEB Sitesinde bulunan Hizmet Tarifelerinde belirtilmektedir."
+        ]
+      },
+      {
+        "intent": "Abonelik İptali",
+        "examples": [
+            "Aboneliğimi nasıl iptal edebilirim?",
+            "Aboneliğimi nasıl iptal ederim?",
+            "Abonelik iptali",
+            "Aboneliğimi nasıl iptal edebilirim ve kalan teminat bedelini nasıl alırım?",
+            "Aboneliğimi nasıl iptal edebilirim ve kalan paramı nasıl alırım?",
+            "Aboneliğimi nasıl iptal edebilirim ve kalan teminat bedelini nasıl alabilirim?",
+            "Aboneliğimi nasıl iptal edebilirim ve kalan paramı nasıl alabilirim?"
+        ],
+        "responses": [
+          "Abonelerimiz, tahliye ettikleri aboneliklerini iptal ettirmek için; Merkez ilçelerimizde şubelerimize şahsen başvuruda bulunmadan 0 332 221 61 61 nolu telefon destek hattından ya da www.koski.gov.tr web sitemizde bulunan online işlemlerden, merkez dışındaki ilçelerde ise KOSKİ Hizmet Birimlerimize bizzat başvurarak veya www.koski.gov.tr web sitemizde bulunan online işlemlerden başvuruda bulunmaları gerekmektedir. (Kendi adlarına kayıtlı olmak şartıyla İBAN numarası vermeleri halinde teminat bedelleri iban hesabına yatırılmaktadır.)İdaremize yapılan bu başvurular en geç üç gün içerisinde sonuçlandırılmakta, su sayaçları kullanıma kapatılarak sayaç üzerinden okunan endekse göre son tahakkuklar düzenlenmektedir. SMS ile başvuru sonuçlarının abonelere bildirilmesini müteakip, KOSKİ Hizmet Birimlerimize müracaat eden abonelerimize borçları düşüldükten sonra kalan teminat bedelleri güncel değerleri üzerinden iade edilmektedir.  İdaremize gelmeden e-mail veya dilekçe ile başvuruda bulunan abonelerimize kalan teminat bedelleri, numarasını verdikleri kendi adlarına kayıtlı İBAN hesaplarına su kesildikten sonra engeç 7 (yedi) iş günü içinde iade edilmektedir.Gerekli Belgeler:1- Abonelik Müracaat Formu (KOSKİ’den temin edilir) 2- T.C. kimlik numarası yer alan kimlik belgesi    3-Başkası adına işlem yapılacaksa Noterden getirilecek vekaletname "
+        ]
+      },
+      {
+        "intent": "İndirimli Su",
+        "examples": [
+            "İndirimli su kullanmak istiyorum ne yapmalıyım?",
+            "İndirimli su kullanmanın şartları nelerdir?",
+            "İndirimli su kullanmak için ne yapmak gerekli?"
+        ],
+        "responses": [
+              "1005 sayılı Kanunun 2. maddesinin birinci fıkrası ile Ek l'inci maddesi ve 3713 sayılı Terörle Mücadele Kanunu uyarınca vatani hizmet tertibinden aylık bağlananlar ile malul gazi olarak aylık bağlanmış olanların ve şehit dul ve yetimi sıfatıyla aylık veya gelir bağlanmış bulunanların ikamet ettikleri, müstakil sayaç takılı olan ve kendi adlarına tesis edilen aboneliklerde kullandıkları su ve atıksu bedelleri ile bu abonelikler için alınması gereken su ve kanalizasyon tesisleri harcamalarına katılma payları, su ve kanal abone hattı bedellerinde %75 oranında tenzilat uygulanır.\n\n4736 sayılı Kamu Kurum ve Kuruluşlarının Ürettikleri Mal ve Hizmet Tarifeleri İle Bazı Kanunlarda Değişiklik Yapılması Hakkında Kanun uyarınca su ücretinde indirim uygulama zorunluluğu bulunan kişiler, sağlık kurulu raporuyla % 40 ve üzerinde engelli olduğunu belgeleyen aboneler (Bu indirimden, % 40 ve üzerinde engelli raporu (Çözger) bulunan reşit olmayan çocuğu olan kişiler de, aynı meskende ikamet ettiklerini belgelemeleri şartıyla faydalanabilirler.), 2022 sayılı \"65 Yaşını Doldurmuş Muhtaç, Güçsüz ve Kimsesiz Türk Vatandaşlarına Aylık Bağlanması Hakkında Kanun\" kapsamındaki kişiler ile 5774 Sayılı Kanun'un 8. maddesinin ikinci fıkrası uyarınca bu Kanuna göre aylık bağlanan amatör sporcuların ikamet ettikleri, müstakil sayaç takılı olan ve kendi adlarına tesis edilen aboneliklerde kullandıkları su ve atıksu bedellerinde %50 oranında tenzilat uygulanır.\n\nBu uygulamadan yararlanmak için;\n- Abonelik Talep Formu (KOSKİ'den temin edilir)\n- Malul, gazi, şehit dul ve yetimi, 65 yaşını doldurmuş güçsüz ve kimsesiz veya engelli olduğunu ve yahut da Devlet Sporcusu olduğunu gösteren belge/rapor\n- Deprem Sigorta Poliçesi (DASK) veya poliçe numarası ile,\nŞehir Merkezinde, İdari binamızda bulunan Abone Servisine, Merkezdeki Müşteri hizmetleri birimlerine,6360 sayılı Kanun uyarınca hizmet alanımıza dahil olan İlçe, Belde ve Köylerde ise, Bölgelerinde bulunan KOSKİ Hizmet Birimlerimize müracaat edildiği takdirde,18 yaş ve üzeri müşterilerimiz, indirimli su ve atıksu abonelik sözleşmesi yaptırabilirler."
+            ]
+      },
+      {
+        "intent": "Çevre Sulama",
+        "examples": [
+            "ÇEVRE SULAMA ABONELİĞİ BAŞVURU ŞARTLARI NELERDİR?",
+            "ÇEVRE SULAMA BAŞVURUSU",
+            "ÇEVRE SULAMA BAŞVURUSU NASIL YAPILIR?",
+            "ÇEVRE SULAMA BAŞVURU ŞARTI"
+        ],
+        "responses": [
+            "1) Gerçek veya tüzel kişilere ait bahçe ve yeşil alanlarda kullanılan sulara ilişkin abonelerdir. Bu kapsamda;a) 1/1000 ölçekli, Uygulama İmar Planı bulunan ve 3194 sayılı İmar Kanunu’nun 18. maddesi uygulanmış mevzuata uygun proje tanzim edilebilen imarlı parseller, çevre sulama suyundan faydalandırılır.b) Belediyelerce oluşturulan hobi bahçeleri, çevre sulama suyundan faydalandırılır.c) Mülkiyeti Belediyelere ait olan ancak, müstecirlere kiraya verilen park, dinlenme tesisleri gibi yerlere ait yeşil alanlar, çevre sulama suyundan faydalandırılır.ç) 1/1000 ölçekli, Uygulama İmar Planı bulunan ve 3194 sayılı İmar Kanunu’nun 18. maddesi uygulanmış mevzuata uygun proje tanzim edilebilen imarlı parsellerde su aboneliği bulunan mesken, işyeri, resmi daire vb. bahçe sulamak için ayrı bir sayaç bağlatmak kaydıyla çevre sulama suyundan faydalandırılır.d) Parseli imarlı olup (mevzuata uygun proje tanzim edilebilen), İnşaat halinde olan aboneliklerden, binanın en az %95 seviyesinin tamamlanması ve bu durumun belgelendirilmesi halinde,  ayrı bir sayaç bağlatmak kaydıyla çevre sulama suyundan faydalandırılır.e) Toplam parsel sınırları içinde, beher 40 m2’ye en az 1 (bir) ağaç düşecek sayıda ağacın dikili olması ve yağmurlama veya damlama sulama sistemine uygun tesisatın kurulu olması şartı aranır.f) Bahçe olarak kullanılan imar parselinde yapı bulunmaması şartı aranır. (İdarenin öngördüğü, içerisinde Kamelya (Etrafı açık üstü kapalı alan), Çadır (Bez, naylon v.b. malzemelerden yapılmış etrafı ve üzeri kapalı alan), Malzeme Odası (Çapa makinesi, kürek, el arabası gibi malzemeleri içerisine alabilecek boyutta kısıtlı alan), vb. yerler hariçtir.)2) Çevre sulama aboneliği verilen ve çevre sulama aboneliği tarifesi uygulanan aboneliklerden, amacı dışında su kullananlara, kullanım durumuna göre, bu yönetmeliğin ilgili maddeleri uyarınca işlem yapılır.3) Çevre sulama aboneliği ile ilgili uygulanacak diğer esasları belirlemeye, Yönetim Kurulu yetkilidir."
+        ]
+    },
+    {
+        "intent": "KUYU AÇILIMI",
+        "examples": [
+          "KUYU AÇMAK İSTİYORUM NE YAPMALIYIM?",
+          "KUYU AÇILIMI ŞARTLARI NELER?",
+          "KUYU AÇMAK İÇİN NELER GEREKLİ?"
+        ],
+        "responses": [
+        "167 sayılı Yeraltı Suları Hakkında Kanun uyarınca; Kuyu açma ruhsatı almak için DSİ 4. Bölge Müdürlüğüne müracaat edilmesi gerekmektedir."    
+        ]
+    },
+    {
+        "intent": "EKS HAKKINDA",
+        "examples": [
+          "EKS (ELEKTRONİK KARTLI SU SAYACI) NEDİR VE YARARLANMAK İÇİN NE YAPMALIYIM?",
+          "EKS DEN NASIL FAYDALANIRIM?",
+          "EKS NASIL KULLANILIR?"
+
+        ],
+        "responses": [
+        " Elektronik Kartlı Sayaç (EKS) Aboneliği: Ön ödemeli olarak su satın alınma imkânı sağlayan elektronik düzeneğe sahip kartlı su sayacını kullanan aboneliklerdir.Aboneliğinde takılı olan mekanik su sayacının yerine veya ilk kez oturulacak gayrimenkulüne EKS taktırmak isteyen müşterilerimiz, Şehir Merkezinde, İdari binamızda bulunan Su Müracaat Birimimize, 6360 sayılı Kanun uyarınca hizmet alanımıza dâhil olan İlçe, Belde ve Köylerde ise, Bölgelerinde bulunan KOSKİ Hizmet Birimlerimize başvuruda bulunabilirler. Başvuru sonrasında görevlilerimizce abonelik mahallinde inceleme yapılır ve sayaç yeri EKS takılmasına uygun ise EKS abonelik sözleşmesi imzalanır. Bu tür abonelerden teminat alınmaz.Mekanik sayacının yerine EKS taktıran abonelerimize, EKS abonelik sözleşmesi yapılması esnasında, teminat bedeli güncel değeri üzerinden iade edilir, EKS bedeli ise kullanmakta olduğu mekanik sayacın güncel değeri düşüldükten sonra aboneliğe yansıtılır."]
+    },
+    {
+        "intent": "SU BORCU",
+        "examples": [
+          "GÜNÜ GEÇMİŞ SU BORÇLARINI NASIL TAKSİTLENDİREBİLİRİM?",
+          "GECİKEN SU BORCU NASIL TAKSİTLENDİRİLİR?",
+          "GECİKEN SU BORCUNA TAKSİTLENDİRME YAPILIR MI?"
+        ],
+        "responses": [
+        "Su ve Atıksu borçlarını taksitle ödemek isteyen abonelerimiz,  KOSKİ Müşteri Hizmetlerine  bizzat müracaat ederek günü geçmiş borçlarını kredi kartı ile veya senet vermek suretiyle en fazla 6 taksite kadar taksitlendirilebilmektedir."]
+    },
+    {
+        "intent": "KISMİ ÖDEME",
+        "examples": [
+          "KISMİ ÖDEME YAPABİLİR MİYİM?",
+          "KISMİ ÖDEME NASIL YAPILIR?"
+        ],
+        "responses": [
+        "İdaremize ait tüm veznelerimizde su ve atıksu faturaları kısmi olarak ödenebilmektedir."]
+        },
+    {
+        "intent": "GEÇMİŞ BORCU OLAN SUYUN KESİLMESİ",
+        "examples": [
+              "FATURAMIN SON ÖDEME TARİHİ GEÇTİ SUYUM KESİLİR Mİ?",
+              "FATURAMI ÖDEMEDİM SUYUM KESİLİR Mİ?"        
+            ],
+        "responses": [
+        "Su ve atıksu borcu bulunan abonelere, son ödeme tarihine iki gün kala hatırlatma amacıyla, SMS gönderilir. Faturaların son ödeme tarihine kadar ödenmemesi durumunda, takip eden okuma döneminde borç ihbarı verilmekte ve bu ihbarı takip eden 3 iş günü sonunda da en az 2 fatura 80 TL veya tek fatura 120 TL üzeri borcu bulunan abonelerin suları, su sayaçlarına aparat takılmak sureti ile kesilmektedir."]
+        },
+    {
+        "intent": "EKS VS. NORMAL SAYAÇ",
+        "examples": [
+              "EKS (ELEKTRONİK KARTLI SU SAYACI)'Yİ NORMAL SAYAÇ İLE DEĞİŞTİRMEK İÇİN NE YAPMALIYIM?",
+              "EKS İLE SU SAYACINI DEĞİŞTİRMEM MÜMKÜN MÜ?",
+              "EKS YERİNE SU SAYACI KULLANABİLİR MİYİM?",
+              "EKS YERİNE SU SAYACINI NASIL KULLANIRIM?"
+        ],
+        "responses": [
+        "İdaremize yapılacak yazılı müracaat sonucunda, su ve atıksu borcunun bulunmaması ve teminat bedeli ile sökme takma bedelinin ödenmesi ve İdarenin uygun görmesi kaydıyla elektronik kartlı su sayaçları, mekanik sayaçla değiştirilebilir."]
+        },
+        {
+        "intent": "Tatlı su çeşmesinden su kullanımı",
+        "examples": [
+          "TATLISU ÇEŞMESİNDEN SU KULLANILIYOR HANGİ BİRİME ŞİKAYET ETMEM GEREKİYOR?",
+          "Tatlı su çeşmesinin uygunsuz kullanımı nasıl bildiririm?",
+          "Ttalı su çeşmesine verilen zararı kime bildirmeliyim?"
+        ],
+        "responses": [
+          "Müşterilerimiz, tatlı su çeşmelerinden amacı dışında su kullananları, 7/24 günün her saatinde 221 63 65 nolu telefonu veya ALO185 nolu Çağrı Merkezini arayarak veya KOSKİ Hizmet birimlerine bizzat müracaat ederek ya da www.koski.gov.tr adresinde kayıtlı web sitemizde bulunan Canlı Destek, Web Panel ve Genel Müdüre Mesaj bölümlerini kullanarak bildirebilirler."
+
+     ] },
+    {
+        "intent": "Günü geçmiş faturanın bankadan ödenememesi",
+        "examples": [
+          "GÜNÜ GEÇEN FATURALARIMI BANKADAN ÖDEYEMİYORUM NE YAPMALIYIM?",
+          "Geciken faturamı bankadan ödeyemiyorum. Ne yapmalıyım?",
+          "Son ödeme tarihi geciken faturamı bankadan ödeyemiyorum. Ne yapmalıyım?",
+          "Geciken faturamı bankadan ödeyemiyorum. Nereye başvurmalıyım?",
+          "Son ödeme tarihi geciken faturamı bankadan ödeyemiyorum. Nereye başvurmalıyım?"                 
+        ],
+        "responses": [
+          "Günü geçen su faturaları, KOSKİ veznelerinden, PTT şubelerinden, www.koski.gov.tr resmi web sitemizden ya da internet tahsilatı da yapan; Türkiye Finans, ING Bank, ICBC Turkey Bank, TEB,  Albaraka, Kuveyttürk, HSBC, Halkbank, Şekerbank, Yapı Kredi, Vakıfbank, Ziraat, Finansbank ve Fiba bankalarından ödenebilmektedir."
+        ]
+        },
+        {
+        "intent": "Kaçak kuyu kullanımı",
+        "examples": [
+          "KAÇAK KUYU İHBARI VE KAÇAK SU KULLANIMLARI NEREYE BİLDİRİLECEKTİR?",   
+          "NASIL KAÇAK KUYU KULLANIMI İHBARI YAPARIM?",
+          "KAÇAK KUYU KULLANIMINI NEREYE BİLDİRMELİYİM?",
+          "KAÇAK KUYU KULLANANLARI NASIL İHBAR EDERİM?"                
+        ],
+        "responses": [
+          "Kaçak açılan kuyular ve kaçak su kullanımları, 7/24 günün her saatinde 221 63 65 veya ALO 185 nolu Çağrı Merkezimiz aranarak veya KOSKİ Hizmet birimlerine bizzat müracaat edilerek bildirebilir."
+        ]
+        },
+    {
+        "intent": "Fatura bilgisi öğrenilmesi",
+        "examples": [
+          "FATURA BİLGİLERİNE NASIL ULAŞABİLİRİM?",
+          "FATURA DETAYLARINA NASIL ULAŞIRIM?",
+          "FATURA BİLGİLERİM HAKKINDA DETAYLI BİLGİYE NASIL ULAŞIRIM?",
+          "FATURAM HAKKINDA NASIL DAHA DETAYLI BİLGİYE NASIL ULAŞIRIM?"
+        ],
+        "responses": [
+          " Müşterilerimiz fatura bilgilerine, “koski.gov.tr” adresli resmi web sitemizin “internet şubesi” linki içerisindeki “Fatura Borcu Sorgulama” bölümünden 7/24, 221 63 65 veya ALO185 Çağrı Merkezini arayarak ve ayrıca, mesai saatleri içerisinde KOSKİ Müşteri Hizmetleri birimlerine bizzat müracaat ederek ulaşabilirler. Ayrıca, e-mail adresini İdaremize bildiren abonelerimize, fatura bilgileri e-mail olarak da gönderilmektedir."
+       ]
+        },
+    {
+        "intent": "Tahmini fatura öğrenilmesi",
+        "examples": [
+          "TAHMİNİ FATURA NEDİR? TAHMİNİ FATURALAR NEYE GÖRE DÜZENLENİYOR?",
+          "TAHMİNİ FATURA NASIL BİLİNİR?",
+          "TAHMİNİ FATURALAR NASIL DÜZENLENİR?",
+          "TAHMİNİ FATURA NE DEMEK?"
+        ],
+        "responses": [
+          " Abonenin binada bulunmaması, kapıyı açmaması, sayaç yerinin kilitli olması veya herhangi bir nedenle su sayacının okunamaması durumunda, tüketimin birikmemesi için aboneye, önceki yılın aynı dönem tüketimlerine göre kıyas almak suretiyle, bir sonraki dönem tüketiminden mahsup edilmek kaydıyla tahmini tahakkuk yapılabilir. Bu tür durumlarda aboneden, su sayacının endeksini okuyup İdareye bildirmesi istenir.  Aktif olan aboneliklerde, 6 ay süresince endeks tesbiti yapılamamış ise, abonenin suyu ana vanadan kesilebilir."
+       ]
+        },
+    {
+          "intent": "Su fiyatlarının belirlenmesi",
+          "examples": [
+           "SU FİYATLARI NEYE GÖRE DÜZENLENİYOR?",
+           "SU FİYATLARI NASIL HESAPLANIYOR?",
+           "SU FİYATLARINDAKİ ARTIŞI NEYE GÖRE YAPILIR?"             
+          ],
+          "responses": [
+            "Su fiyatları belirlenirken, Yönetim ve İşletme giderleri (Enerji ve malzeme giderleri, personel giderleri ve çeşitli giderler) ile amortismanlar, (Sabit bir kıymet olan tesislerin ve demirbaşların ömürlerinin sonunda yenilenebilmeleri için ayrılması zorunlu bedeller, Yatırım kredilerinin yıllık anapara ve faizleri ve tesislerin iyileştirilmesi ve aktifleştirilmeyen tesislerin büyütme ve onarım giderleri KOSKİ Tarifeler Yönetmeliği Madde 8 ) dikkate alınmaktadır."
+         ]
+          },
+    {
+      "intent": "Fatura son ödeme tarihi",
+      "examples": [
+        "FATURALARIMA VERİLEN SON ÖDEME TARİHLERİ MAAŞ TARİHLERİNE GÖRE VERİLEBİLİR Mİ?",
+        "FATURA ÖDEME TARİHİ DEĞİŞTİRİLEBİLİR Mİ?",
+        "FATURA SON ÖDEME TARİHİ DEĞİŞİR Mİ?"                  
+      ],
+      "responses": [
+        "Su ve atıksu abonelerimizin tüketim endekslerinin tespiti ve faturalandırılması işlemleri el bilgisayarları aracılığıyla ve bölgesel bazda yapılmakta olup, ödeme süreleri de buna göre verilmektedir. Sistem olarak ödeme süreleri bireysel olarak değil toplu olarak verilmektedir. Maaşa göre işlem yapılması halinde, aynı anda okuma işlemi yapılan aboneler arasında (ödeme süreleri farklı olacağından) eşitlik ilkesine aykırı bir işlem yapılmasına neden olacağından maaş tarihlerine göre son ödeme tarihlerinin verilmesi uygun görülmemektedir. İdaremizce, kredi kartı ile ödeme imkânı getirilmiş olması nedeniyle ödeme ile abonelerimize ek süre imkanı sağlanmaktadır."
+      ]
+      },
+    {
+        "intent": "Su sayacının donmadan korunması",
+        "examples": [
+        "SU SAYACIMIN DONMAMASI İÇİN NE YAPMALIYIM? KIŞ AYLARINDA NASIL KORUNUR?",
+        "SU SAYACIMI SOĞUKTAN NASIL KORURUM?",
+        "SU SAYACIMI DONMASINI NASIL ENGELLERİM?",
+        "SAYACI KIŞ AYLARINDA NASIL KORURUZ?"                    
+        ],
+        "responses": [
+          "Su sayacının donmaması için müşterilerimiz tarafından alınacak tedbirler aşağıda sıralanmıştır:1-Sayacın bulunduğu yere beton, plastik, ahşap veya demirden bir muhafaza konulmalı yada yapılmalıdır. Sayaç bağlantıları ile vanalardan veya diğer bağlantı elemanlarından su sızıyor veya damlıyorsa, abone numarası belirtilmek suretiyle KOSKİ'ye bildirilmelidir.2-Su sayaçlarının donmaması için sayaçların bulunduğu yerin hava sirkülâsyonuna karşı korunması amacıyla açık bölümlerin kapatılması gerekmektedir.3- Sayaç muhafaza yerleri sayaçları korumak için sayacın üst seviyesine kadar (sayacın cam çerçeveli okuma penceresi kapatılmayacak) sayaç muhafaza yerini tamamen kapatacak şekilde perlit, iri talaş, saman vb. malzemelerden doldurulmuş yastıklar konulması ve üzerinin muntazam bir kapakla kapatılarak harici tesirlerden korunması gerekmektedir. Gübre vb. kolayca oksit yapıcı nemli malzemelerin özellikle konulmaması gerekir.4- Çok şiddetli soğuklarda musluklar çok az bir şekilde açık bırakılarak sayaçta ve tesisatta durgun su bırakılmamalıdır.5- Abonelerce tedbir alınmaması halinde su sayaçlarının kolayca patlayacağı ve gövdesi patlayan sayaçların ise tamir imkânının olmadığı, diğer taraftan oluşan bu durumun önemli miktarda su kaybına yol açacağı unutulmamalıdır.6- Donan sayaca ve tesisata ateş tutulmamalı ve sıcak su dökülmemelidir."
+        ]
+      },
+      {
+        "intent": "Su sayacının sökülmesi",
+        "examples": [
+         "SU SAYACIM DEĞİŞTİRİLDİĞİNDE ÜCRET ALINIYOR MU?",
+         "SU SAYACI DEĞİŞİMİ ÜCRETLİ Mİ?",
+         "SU SAYACININ DEĞİŞİMİNDEN ÜCRET ALINIYOR MU?"                    
+        ],
+        "responses": [
+          "KOSKİ Tarifeler Yönetmeliği’nin 20. maddesinin 1. bendindeki; “ Tesisatlarına İdarece ilk defa su sayacı takılan, sayaçları ihmal, dikkatsizlik ve dış etkiler nedeniyle patlayan veya kullanılamaz şekilde olan, sayacı kayıp veya çalınan, muayene neticesinde sayacın doğru çalıştığı tespit edilen, abonenin kendi isteği üzerine sayacı sökülen veya takılan abonelerden, her yıl Sanayi ve Teknoloji Bakanlığı tarafından Resmi Gazetede yayımlanan 'Su, Elektrik ve Doğalgaz Sayaçlarının Tamir ve Ayar Ücret Tarifesi Hakkında Tebliğ’de belirtilen sayaç sökme- takma ücreti alınır.' hükmü ile 58. Maddesinin 23. bendindeki; “Abonelerden kaynaklanan ihmal, dikkatsizlik veya kusur nedeniyle, su sayaçlarının kırılması, donması, yanması, iç mekanizmasının tahrip olması, gövdesinin patlaması vb. hallerde, sökülen sayacın yerine yeni su sayacı takılır ve takılan yeni su sayacının bedeli, sökme-takma ücreti ile birlikte aboneden tahsil edilir. Sökülen sayaç için İdarece belirlenmiş olan bedel, takılan su sayacının satış bedelinden düşülür veya talep halinde eski sayaç iade edilir. İade halinde İdarece belirlenmiş olan bedel düşülmez.” hükmü ve 24. bendindeki; “Ön ödemeli/kartlı veya uzaktan okumalı (RF, LORA, GPRS vb.) sayaçlarda montaj yeri şartlarından kaynaklanan arızalar, garanti dışında olup, tamirat süresi içinde abone pasif olabileceğinden yeni sayaç bedeli sökme-takma bedeli aboneden tamamı tahsil edilir. Tamirat sırasında kullanılacak malzeme ve işçilik ücreti yeni sayaç bedelinden düşük kalırsa aboneye tenzil yapılacaktır.” hükümlerine istinaden belirtilen bedeller alınır.  Bunların dışında kalan sebeplerden dolayı sayaçları değiştirilen müşterilerimizden herhangi bir ücret alınmamaktadır."
+        ]
+        },
+      {
+       "intent": "Abonelik bilgilerinin güncellenmesi",
+       "examples": [
+         "ABONELİK BİLGİLERİNİ NASIL GÜNCELLEYEBİLİRİM?",
+         "ABONELİK BİLGİLERİMİ NASIL YENİLERİM?",
+         "ABONELİK BİLGİLERİMİ NASIL DÜZENLERİM?"         
+      ],
+       "responses": [
+      " Abonelik bilgilerini güncellemek isteyen abonelerimiz, web sitemizde bulunan 'abonelik bilgileri güncelle' bölümünü kullanarak veya 7/24 günün her saatinde  ALO185 nolu Çağrı Merkezini arayarak, mesai saatleri içerisinde de, KOSKİ Müşteri Hizmetlerine müracaat ederek bilgilerinin güncellenmesini sağlayabilirler."
+      ]
+       },
+       {
+        "intent": "Fatura bilgilerinin farklı kanallarla iletilmesi",
+        "examples": [
+        "FATURA BİLGİLERİMİN E-MAİL VEYA SMS YOLU İLE BİLDİRİLMESİ İÇİN NE YAPMALIYIM?",
+        "FATURAMIN MESAJ OLARAK GELMESİ MÜMKÜN MÜ?",
+        "FATURAMIN E-MAİL İLE GELMESİ MÜMKÜN MÜ?"             
+      ],
+        "responses": [
+          "Abonelerimiz e-mail adres bilgilerini veya cep telefonu bilgilerini, 7/24 günün her saatinde 221 63 65 nolu telefonu veya ALO185 nolu Çağrı Merkezine, mesai saatleri içerisinde  KOSKİ Müşteri Hizmetlerine  müracaat ederek veya www.koski.gov.tr adresinde kayıtlı web sitemizde bulunan Canlı Destek veya Web Panel bölümlerini kullanarak taleplerini iletebilirler"
+      ]
+      },
+      {
+         "intent": "Fatura itirazı",
+         "examples": [
+          "FATURA MİKTARI ÇOK YÜKSEK NEREYE BAŞVURMALIYIM?",
+          "FATURA TUTARI FAZLA. FATURAMI KONTROL EDER MİSİNİZ?",
+          "FATURAMIN TUTARI TUTARSIZ. FATURAMI İNCELER MİSİNİZ?"                   
+        ],
+         "responses": [
+          "Abonelirimiz yüksek gelen fatura itirazları için  KOSKİ Müşteri Hizmetlerimize  veya www.koski.gov.tr web sitemizde bulunan e-koski bölümünü kullanarak, bilgi edinme başvurusu ya da e-mail göndererek başvuruda bulunabilirler. Şikâyetli sayaçların değiştirilmesi için abonelerimizin  yazılı başvurusu gerekmektedir."
+        ]
+     },
+     {
+      "intent": "EKS sorunu",
+      "examples": [
+         "EKS (ELEKTRONİK KARTLI SU SAYACI) SORUNLARIMI NEREYE BİLDİRMELİYİM?",
+         "KULLANDIĞIM EKS DE SORUN VAR NEREYE BİLDİRMELİYİM?",
+         "EKS KAYNAKLI PROBLEMLERİMİ NEREYE BAŞVURMALIYIM?"                
+     ],
+      "responses": [
+        "  Abonelerimiz  EKS ile ilgili karşılaştıkları sorunlarını, 7/24 günün her saatinde 221 63 65 nolu telefonu veya ALO185 nolu Çağrı Merkezini arayarak veya  KOSKİ Müşteri Hizmetlerimize elektronik kartları ile birlikte başvuruda bulunarak bildirebilirler."
+     ]
+  },
+  {
+    "intent": "Kanalizasyon arızası ",
+    "examples": [
+      "SU VEYA KANALİZASYON ARIZALARI İLE SAYAÇ ARIZALARINI NEREYE BİLDİREBİLİRİM?",              
+      "KANALİZASYON ARIZASINI NASIL BİLDİRİRİM?",
+      "SU ARIZASINI NEREYE BİLDİRİRİM?",
+      "KANALİZASYON ARIZASINI NEREYE BİLDİRİRİM?"
+   
+      ],
+    "responses": [
+      "Müşterilerimiz su arızalarını, 7/24 günün her saatinde 221 63 65 veya ALO185 nolu Çağrı Merkezini arayarak bildirebilirler."
+   ]
+},
+{
+  "intent": "Abone hattı ",
+  "examples": [
+   "ABONE HATTI VE ABONE ŞUBE YOLU HATTINDAKİ ARIZAYI KOSKİ GİDERİYOR MU? ÜCRET ALINIYOR MU?",
+   "ABONE HATTINDAKİ ARIZAYI KOSKİ Mİ KARŞILIYOR?",
+   "ABONE HATTINDA ARIZA VAR. ÜCRET ALINIYOR MU?",
+   "ABONE HATTINDAKİ ARIZAYI KULLANICI MI ÖDER?"                
+ ],
+  "responses": [
+    "  Su abone hattı, KOSKİ Tarifeler Yönetmeliğinin 51. maddesinde belirtilen şebeke hattından  parsel sınırına kadar su taşıyan borulardır.a) Su abone hattının tesisinde borunun çapı ve diğer hususlar, kullanılacak su miktarı dikkate alınarak idarece belirlenir. b) Su abone hattının tesisi, İdare tarafından yapılır veya yaptırılır. İdarenin uygun gördüğü hallerde abone tarafından da yaptırılabilir. Abone tarafından yapılan abone hattının mülkiyeti, işletme ve bakım karşılığı KOSKİ’ye devredilmiş sayılır.c)   Su abone hattından diğer abonelere su verilip verilmemesinde, KOSKİ yetkilidir.    ç) Su abone hattına, KOSKİ’den izin alınmadan hiçbir müdahalede bulunulamaz. Bulunanlar veya zarar verenler hakkında, yönetmelik hükümleri gereğince işlem yapılır.d) Su abone hattında yapılacak tamir bakım, tadilat ve ıslah KOSKİ tarafından yapılır. Şayet abone hattında kurumumuzca yapılan incelemeler sonucunda herhangi bir sıkıntı olmamasına rağmen, abonenin talebine istinaden yenileme veya ıslah yapılması durumunda ise, masraflarını kabul etmek şartıyla, yapılacak hizmete ait tüm ücretler aboneden tahsil edilir. Ancak eski demir boru hatları olan yerlerde yapılan tamir, bakım ve ıslahlardan bedel alınmaz.Su şube yolu, KOSKİ Tarifeler Yönetmeliğinin 52. maddesinde belirtilen, parsel sınırından sayacın çıkışındaki bağlantı rakoruna kadar su taşıyan borulardır.a) Su şube yolunun tesisi, KOSKİ'den müsaade almak şartıyla, abone tarafından yaptırılır.b) Su şube yolunun mülkiyeti, işletme, bakımı ve onarımı faydalanan abonelere aittir.c) Şube yolunda yapılacak onarım, tadilat ve ıslah, KOSKİ’den müsaade almak ve masrafları kendilerine ait olmak şartıyla aboneler tarafından yaptırılır.ç) Su şube yolunda meydana gelecek arıza ve hasarlardan, KOSKİ mesul tutulamaz.d) Su şube yoluna, KOSKİ'den izin alınmadan hiçbir müdahalede bulunulamaz. Bulunanlar ve zarar verenler hakkında, yönetmelik hükümleri gereğince işlem yapılır. Ancak, mal ve can güvenliğini tehdit eden yangın, deprem, sel vb. hallerde, izin alınmadan, abone tarafından su kesilerek, derhal KOSKİ' ye haber verilir. Yukarıda belirtilen yönetmelik maddelerine istinaden işlem yapılmaktadır."
+ ]
+},
+{
+  "intent": "Mükerrer ödeme ",
+  "examples": [
+    "MÜKERRER ÖDEME YAPTIM NE YAPMAM GEREKİR?",
+    "MÜKERRER OLARAK YAPILAN ÖDEMEYİ YAPTIM. ŞİMDİ NE YAPMALIYIM?"                  
+ ],
+  "responses": [
+    "Faturalarını mükerrer ödeyen abonelerimizin  mükerrer ödemeyi gösteren belgeleriyle ve yazılı olarak,  KOSKİ Müşteri Hizmetlerine  bizzat başvurmaları gerekmektedir."
+ ]
+},
+{
+  "intent": "Basınç düşüklüğü",
+  "examples": [
+    "DAİREME BASINÇ DÜŞÜKLÜĞÜ NEDENİYLE SU ÇIKMIYOR NE YAPMAM GEREKİYOR?",
+    "BASINÇTAN DÜŞÜKLÜĞÜNDEN DOLAYI SU YETERSİZ NE YAPMALIYIM?"               
+ ],
+  "responses": [
+    "Konya Büyükşehir Belediyesi İmar Yönetmeliğinin, 49 (1) maddesi (a) bendinde; “Konutlarda, zemin+3 kat’ı geçen binalarda su deposu ve hidrofor için ayrı mekân oluşturulacak ve daire başı 250 lt./gün den az olmayan su deposu yapılacak ve çalıştırılacaktır.” denilmektedir.Diğer taraftan, normal işletme koşullarına göre, İdaremizin şehir merkezinde bulunan sitelerin zemin kat su şebeke girişlerine kadar sağlamakla yükümlü olduğu basınç değeri 2,5 ila 3,5 bar arasında sabit tutulmaya çalışılmaktadır. Kış aylarında su kullanımı yaz aylarındaki kadar yoğun olmadığından su basıncımız 4–5 bara kadar çıkmakta ve yüksek binaların en üst katlarındaki su ihtiyacını bile karşılayabilmektedir.Bu nedenle, hidrofor ve depolama sistemi bulunan binalar, kış aylarında hidrofor sistemini devre dışı bırakmakta ancak, yaz aylarında devreye almamaktadırlar. Bu da su kullanımının ve elektrik kesintilerinin yoğun olduğu yaz aylarında basınç düşüklüğüne ve kısa süreli kesintilere neden olmaktadır. Dolayısıyla, şehrimizde, ilgili yönetmelik gereği, zemin+3 katın üzerindeki binalarda hidrofor tesisatı olan, ancak devre dışı bırakan binaların, hidroforlarını devreye almaları, hidrofor tesisatı bulunmayan binaların ise hidrofor tesis etmeleri gerekmektedir."
+ ]
+},
+{
+  "intent": "Sayacın hatalı okunması",
+  "examples": [
+    "SAYACIM HATALI OKUNMUŞ, DÜZELTİLMESİ İÇİN NE YAPMAM GEREKİYOR?",
+    "SAYACIM HATALI OKUNMUŞ, NASIL DÜZELTEBİLİRİM?",
+    "SAYACIMIN HATALI OKUNMASINI NASIL DÜZELTİRİM?",
+    "SAYACIM HATALI OKUNMUŞ DÜZELTİLMESİ İÇİN NEREYE BAŞVURMALIYIM?"
+ ],
+  "responses": [
+      "Sayaçlarının hatalı okunduğunu, dolayısıyla hatalı fatura düzenlendiğini düşünen Abonelerimiz, hatalı faturalarının düzeltilmesi taleplerini 7/24 gün, 221 63 65 veya ALO185 nolu Çağrı Merkezimizi arayarak; mesai saatleri içerisinde ise, KOSKİ Müşteri Hizmetlerine  bizzat müracaat ederek veya www.koski.gov.tr adresinde kayıtlı web sitemizde bulunan Canlı Destek veya Web Panel bölümlerini kullanarak iletebilirler."
+ ]
+},
+{
+  "intent": "Su kaçağı",
+  "examples": [
+       "TESİSATIMDA SU KAÇAĞI VAR NE YAPMAM GEREKİYOR?",
+       "TESİSATIMDA KAÇAK VAR NASIL NE YAPMALIYIM?",
+       "TESİSATIMDA SU KAÇAĞI VAR NE YAPMALIYIM?",
+       "TESİSATIMDA SU KAÇAĞI VAR NASIL DÜZELTEBİLİRİM?",
+       "TESİSATIMDA SU KAÇAĞI VAR NASIL DÜZELTEBİLİRİM?"
+ ],
+  "responses": [
+    "    Su sayacından sonraki tesisatta meydana gelen kaçak veya patlaklardan dolayı oluşan yüksek faturalar için abonelerimizin yazılı olarak KOSKİ Müşteri Hizmetlerine başvuru yapmaları gerekir."
+ ]
+},
+{
+  "intent": "Tahmini fatura düzenlenmesi",
+  "examples": [
+    "TAHMİNİ ÇIKAN FATURALAR GERÇEK ENDEKSE GÖRE ONLİNE NASIL DÜZELTİLİR?",
+    "TAHMİNİ OLARAK DÜZENLENEN FATURA GERÇEK ENDEKSE NASIL ÇEKİLİR?",
+    "TAHMİNİ OLARAK DÜZENLENEN FATURALAR GERÇEK ENDEKSE GÖRE NASIL DÜZENLENİR?",
+    "TAHMİNİ OLARAK DÜZENLENEN FATURALAR GERÇEK ENDEKSE GÖRE ONLİNE NASIL DEĞİŞTİRİLİR?"                
+ ],
+  "responses": [
+    "Faturanız tahmini olarak okundu ise; https://online.koski.gov.tr/  ( Fatura sekmesi içinde bulunan fatura düzeltme kısmından ) yada Koski mobil uygulamasını telefonunuza indirerek FATURA DÜZELTME kısmından endeksinizi düzeltebilirsiniz.ENDEKS DÜZELTİLİRKEN DİKKAT EDİLMESİ GEREKEN HUSUSLAR:1-E-Koski üyeliğiniz olmadan fatura düzeltmesi yapılamadığından mutlaka üye olmanız gerekmektedir. Üye girişi yaptığınızda sadece kendi adınıza olan aboneliklerle ilgili düzeltme yapabilirsiniz.2-Tahmini okunmayan (Gerçek) faturalarla ilgili düzeltme yapılamaz.3-Su sayacınızın numarası ile endeksinin okunaklı bir şekilde resmini çekip sisteme yüklemeniz gerekmektedir."
+
+
+
+
+
+ ]
+}
+                                           
+   ]
+  }
+  
