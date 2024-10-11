@@ -29,8 +29,9 @@
       {
         "intent": "Sayaç",
         "examples": [
-          "Su sayacım çalışmıyor."
-          
+          "Su sayacım çalışmıyor.",
+          "Su sayacımda hata var.",
+          "Su sayacım dönmüyor."
         ],
         "responses": [
           "Gerekli birimlere haber verildi"
