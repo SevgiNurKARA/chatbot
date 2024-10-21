@@ -1,161 +1,151 @@
 import json
 import os
-import shutil
-import torch
-from pathlib import Path
-from datasets import Dataset
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from datasets import Dataset
 from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification, Trainer, TrainingArguments
+import logging
+from transformers import IntervalStrategy
 
-# Define base directory and create Path objects for all directories
-BASE_DIR = Path.cwd()
-RESULTS_DIR = BASE_DIR / 'results'
-LOGS_DIR = BASE_DIR / 'logs'
-MODEL_DIR = BASE_DIR / 'saved_model'
+# Logging ayarları
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def setup_directories():
-    """Set up directories with proper error handling"""
-    directories = [RESULTS_DIR, LOGS_DIR, MODEL_DIR]
-    for directory in directories:
-        try:
-            # Remove directory if it exists
-            if directory.exists():
-                if directory.is_file():
-                    directory.unlink()  # Delete if it's a file
-                else:
-                    shutil.rmtree(str(directory))  # Delete if it's a directory
-            
-            # Create directory and all parent directories
-            directory.mkdir(parents=True, exist_ok=True)
-            print(f"Successfully created directory: {directory}")
-        except Exception as e:
-            print(f"Error creating directory {directory}: {str(e)}")
-            raise
-
-print("Setting up directories...")
-setup_directories()
-
-# Load and prepare data
+# Veri setini yükleme
 def load_data(file_path):
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             return json.load(f)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Veri dosyası bulunamadı: {file_path}")
-    except json.JSONDecodeError:
-        raise ValueError(f"JSON dosyası geçersiz format: {file_path}")
+    except Exception as e:
+        logging.error(f"Veri yüklenirken hata: {e}")
+        return None
 
-print("Loading data...")
-train_data = load_data('train_data.json')
-test_data = load_data('test_data.json')
+# Dizin oluşturma fonksiyonu
+def create_directory(directory):
+    try:
+        os.makedirs(directory, exist_ok=True)
+        logging.info(f"{directory} dizini oluşturuldu veya zaten mevcut.")
+    except Exception as e:
+        logging.error(f"{directory} dizini oluşturulurken hata: {e}")
+        raise
 
-def prepare_data(data):
-    examples = []
-    labels = []
-    for item in data:
-        for example in item['examples']:
-            examples.append(example)
-            labels.append(item['intent'])
-    return examples, labels
+# Ana fonksiyon
+def main():
+    # Çıktı dizinlerini oluştur
+    try:
+        create_directory('/results')
+        create_directory('/logs')
+        create_directory('/saved_model')
+    except Exception as e:
+        logging.error(f"Dizinler oluşturulurken hata: {e}")
+        return
 
-print("Preparing datasets...")
-train_texts, train_labels = prepare_data(train_data)
-test_texts, test_labels = prepare_data(test_data)
+    # Orijinal veri setini yükleme
+    original_data = load_data('chatbot_data.json')
+    if original_data is None:
+        return
 
-# Convert labels
-label_encoder = LabelEncoder()
-train_labels_encoded = label_encoder.fit_transform(train_labels)
-test_labels_encoded = label_encoder.transform(test_labels)
+    # Veriyi hazırlama
+    texts, labels = [], []
+    for intent in original_data.get('intents', []):
+        for example in intent.get('examples', []):
+            texts.append(example)
+            labels.append(intent['intent'])
 
-# Save label encoder classes
-label_classes_file = MODEL_DIR / 'label_classes.json'
-with label_classes_file.open('w', encoding='utf-8') as f:
-    json.dump(list(label_encoder.classes_), f, ensure_ascii=False, indent=2)
+    logging.info(f"Toplam örnek sayısı: {len(texts)}")
+    logging.info(f"Benzersiz etiket sayısı: {len(set(labels))}")
 
-print("Loading tokenizer...")
-try:
-    tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
-except Exception as e:
-    raise Exception(f"Tokenizer yüklenirken hata oluştu: {str(e)}")
+    # Veriyi eğitim ve test setlerine ayırma
+    train_texts, test_texts, train_labels, test_labels = train_test_split(texts, labels, test_size=0.2, random_state=42)
 
-print("Tokenizing texts...")
-train_encodings = tokenizer(train_texts, truncation=True, padding=True, max_length=512)
-test_encodings = tokenizer(test_texts, truncation=True, padding=True, max_length=512)
+    # Etiketlerin sayısal değerlere dönüştürülmesi
+    label_encoder = LabelEncoder()
+    train_labels_encoded = label_encoder.fit_transform(train_labels)
+    test_labels_encoded = label_encoder.transform(test_labels)
 
-# Create datasets
-train_dataset = Dataset.from_dict({
-    'input_ids': train_encodings['input_ids'],
-    'attention_mask': train_encodings['attention_mask'],
-    'label': train_labels_encoded
-})
+    # Tokenizer yükleme
+    try:
+        tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
+    except Exception as e:
+        logging.error(f"Tokenizer yüklenirken hata: {e}")
+        return
 
-test_dataset = Dataset.from_dict({
-    'input_ids': test_encodings['input_ids'],
-    'attention_mask': test_encodings['attention_mask'],
-    'label': test_labels_encoded
-})
+    # Tokenizasyon
+    train_encodings = tokenizer(train_texts, truncation=True, padding=True, max_length=512)
+    test_encodings = tokenizer(test_texts, truncation=True, padding=True, max_length=512)
 
-print("Loading model...")
-num_labels = len(label_encoder.classes_)
-try:
-    model = DistilBertForSequenceClassification.from_pretrained(
-        'distilbert-base-uncased',
-        num_labels=num_labels
+    # Dataset oluşturma
+    train_dataset = Dataset.from_dict({
+        'input_ids': train_encodings['input_ids'],
+        'attention_mask': train_encodings['attention_mask'],
+        'labels': train_labels_encoded
+    })
+
+    test_dataset = Dataset.from_dict({
+        'input_ids': test_encodings['input_ids'],
+        'attention_mask': test_encodings['attention_mask'],
+        'labels': test_labels_encoded
+    })
+
+    logging.info(f"Eğitim seti boyutu: {len(train_dataset)}")
+    logging.info(f"Test seti boyutu: {len(test_dataset)}")
+
+    # Modeli yükleme
+    num_labels = len(label_encoder.classes_)
+    try:
+        model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=num_labels)
+    except Exception as e:
+        logging.error(f"Model yüklenirken hata: {e}")
+        return
+
+    # Eğitim argümanları ayarlama
+    training_args = TrainingArguments(
+        output_dir='./results',
+        eval_strategy="steps",
+        save_strategy="steps",
+        evaluation_strategy="steps",  # Eski versiyon uyumluluğu için
+        eval_steps=100,
+        save_steps=100,
+        per_device_train_batch_size=16,
+        per_device_eval_batch_size=16,
+        num_train_epochs=5,
+        weight_decay=0.01,
+        logging_dir='/logs',
+        logging_steps=10,
+        load_best_model_at_end=True,
+        metric_for_best_model="eval_loss",
+        greater_is_better=False,
     )
-except Exception as e:
-    raise Exception(f"Model yüklenirken hata oluştu: {str(e)}")
 
-print("Setting up training arguments...")
-training_args = TrainingArguments(
-    output_dir=str(RESULTS_DIR),
-    evaluation_strategy="epoch",
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=16,
-    num_train_epochs=10,
-    weight_decay=0.01,
-    save_strategy="epoch",
-    learning_rate=2e-5,  # Daha düşük learning rate deneyelim
-    warmup_steps=500,    # Warm-up ekleyelim
-    load_best_model_at_end=True,
-    logging_dir=str(LOGS_DIR),
-    logging_steps=100,
-    save_total_limit=2,
-    overwrite_output_dir=True,
-    no_cuda=not torch.cuda.is_available(),
-    report_to="none"  # Disable wandb and other reporting
-)
+    # Trainer oluşturma
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=test_dataset
+    )
 
-print("Creating trainer...")
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=train_dataset,
-    eval_dataset=test_dataset
-)
+    # Modeli eğitme
+    try:
+        trainer.train()
+    except Exception as e:
+        logging.error(f"Model eğitilirken hata: {e}")
+        logging.debug("Trainer detayları:", exc_info=True)
+        return
 
-print("Starting training...")
-try:
-    trainer.train()
-except Exception as e:
-    print(f"Training error details: {str(e)}")
-    raise Exception(f"Model eğitimi sırasında hata oluştu: {str(e)}")
+    # Modeli değerlendirme
+    try:
+        eval_results = trainer.evaluate()
+        logging.info(f"Değerlendirme sonuçları: {eval_results}")
+    except Exception as e:
+        logging.error(f"Model değerlendirilirken hata: {e}")
 
-print("Evaluating model...")
-try:
-    eval_results = trainer.evaluate()
-    print(f"Değerlendirme sonuçları: {eval_results}")
-    
-    # Save evaluation results
-    eval_results_file = RESULTS_DIR / 'eval_results.json'
-    with eval_results_file.open('w', encoding='utf-8') as f:
-        json.dump(eval_results, f, ensure_ascii=False, indent=2)
-except Exception as e:
-    print(f"Değerlendirme sırasında hata oluştu: {str(e)}")
+    # Modeli ve tokenizer'ı kaydetme
+    try:
+        model.save_pretrained('./saved_model')
+        tokenizer.save_pretrained('./saved_model')
+        logging.info("Model ve tokenizer başarıyla kaydedildi.")
+    except Exception as e:
+        logging.error(f"Model ve tokenizer kaydedilirken hata: {e}")
 
-print("Saving model and tokenizer...")
-try:
-    model.save_pretrained(str(MODEL_DIR))
-    tokenizer.save_pretrained(str(MODEL_DIR))
-    print("Model ve tokenizer başarıyla kaydedildi.")
-except Exception as e:
-    print(f"Model kaydedilirken hata oluştu: {str(e)}")
+if __name__ == "__main__":
+    main()
