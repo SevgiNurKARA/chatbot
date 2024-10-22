@@ -41,8 +41,8 @@ def predict(model, tokenizer, label_encoder, text):
         return None
 
 def main():
-    model_path = './saved_model'
-    data_file_path = 'chatbot_data.json'  # Orijinal veri dosyasının yolu
+    model_path = './fine_tuned_model'
+    data_file_path = 'expanded_chatbot_data.json'  # Orijinal veri dosyasının yolu
 
     model, tokenizer = load_model_and_tokenizer(model_path)
     label_encoder = load_label_encoder(data_file_path)

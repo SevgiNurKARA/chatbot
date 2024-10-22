@@ -47,8 +47,8 @@ def get_response(intent, responses):
     return random.choice(responses.get(intent, ["Üzgünüm, bu konuda bir cevabım yok."]))
 
 def chatbot():
-    model_path = './saved_model'
-    data_file_path = 'chatbot_data.json'  # Orijinal veri dosyasının yolu
+    model_path = './fine_tuned_model'
+    data_file_path = 'expanded_chatbot_data.json'  # Orijinal veri dosyasının yolu
 
     model, tokenizer = load_model_and_tokenizer(model_path)
     label_encoder, responses = load_label_encoder_and_responses(data_file_path)
