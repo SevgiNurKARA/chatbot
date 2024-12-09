@@ -14,6 +14,18 @@
         ]
       },
       {
+        "intent": "Karşılama",
+        "examples": [
+          "Merhaba",
+          "İyi günler",
+          "Hayırlı sabahlar",
+          "Kolay gelsin"         
+        ],
+        "responses": [
+          "Merhaba, Ben bir yapay zekayım. Size nasıl yardımcı olabilirim? Lütfen yazınız."
+        ]
+      },
+      {
         "intent": "Fatura İtirazı",
         "examples": [
           "Faturamda hata var, ne yapmalıyım?",
@@ -27,7 +39,7 @@
         ]
       },
       {
-        "intent": "Sayaç",
+        "intent": "Sayac",
         "examples": [
           "Su sayacım çalışmıyor.",
           "Su sayacımda hata var.",

@@ -57,11 +57,13 @@ def main():
     # Veriyi eğitim ve test setlerine ayırma
     train_texts, test_texts, train_labels, test_labels = train_test_split(texts, labels, test_size=0.2, random_state=42)
 
-    # Etiketlerin sayısal değerlere dönüştürülmesi
+    all_labels = train_labels + test_labels
     label_encoder = LabelEncoder()
-    train_labels_encoded = label_encoder.fit_transform(train_labels)
-    test_labels_encoded = label_encoder.transform(test_labels)
+    label_encoder.fit(all_labels)
 
+# Etiketleri sayısal değerlere dönüştür
+    train_labels_encoded = label_encoder.transform(train_labels)
+    test_labels_encoded = label_encoder.transform(test_labels)
     # Tokenizer yükleme
     try:
         tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
@@ -138,6 +140,22 @@ def main():
         logging.info(f"Değerlendirme sonuçları: {eval_results}")
     except Exception as e:
         logging.error(f"Model değerlendirilirken hata: {e}")
+# Label mapping oluşturma ve kaydetme
+    def save_label_mapping(label_encoder, directory='./saved_model'):
+    # Dizin oluştur
+        os.makedirs(directory, exist_ok=True)
+    
+    # Label mapping oluştur
+        label_mapping = {label: idx for idx, label in enumerate(label_encoder.classes_)}
+    
+    # Dosyayı kaydet
+        try:
+            with open(f"{directory}/label_mapping.json", 'w') as f:
+                json.dump(label_mapping, f, ensure_ascii=False, indent=4)
+            print("Label mapping başarıyla kaydedildi.")
+        except Exception as e:
+            print(f"Label mapping kaydedilirken hata: {e}")
+    save_label_mapping(label_encoder, './saved_model')
 
     # Modeli ve tokenizer'ı kaydetme
     try:
