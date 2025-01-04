@@ -150,7 +150,6 @@ class ChatbotInterface:
             return f"Yanıt alınamadı: {str(e)}"
 
     def get_weather_response(self):
-        api_key = "7549d0b1ceff6a105a44074f3df577e9"
         city = "Konya"
         url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric&lang=tr"
 
