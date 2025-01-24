@@ -1,0 +1,119 @@
+2025-01-24 07:29:47,236 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 07:29:47,331 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-01-24 07:29:47,335 - INFO - [33mPress CTRL+C to quit[0m
+2025-01-24 07:29:47,338 - INFO -  * Restarting with stat
+2025-01-24 07:29:53,499 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 07:29:53,516 - WARNING -  * Debugger is active!
+2025-01-24 07:29:53,522 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 07:30:24,456 - INFO - 127.0.0.1 - - [24/Jan/2025 07:30:24] "POST /chat HTTP/1.1" 200 -
+2025-01-24 07:34:07,338 - INFO - 127.0.0.1 - - [24/Jan/2025 07:34:07] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:02:47,262 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 08:02:47,325 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-01-24 08:02:47,325 - INFO - [33mPress CTRL+C to quit[0m
+2025-01-24 08:02:47,331 - INFO -  * Restarting with stat
+2025-01-24 08:02:54,193 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 08:02:54,224 - WARNING -  * Debugger is active!
+2025-01-24 08:02:54,224 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:03:29,997 - INFO - 127.0.0.1 - - [24/Jan/2025 08:03:29] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:03:37,764 - INFO - 127.0.0.1 - - [24/Jan/2025 08:03:37] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:04:44,894 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:04:45,625 - INFO -  * Restarting with stat
+2025-01-24 08:04:52,409 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 08:04:52,429 - WARNING -  * Debugger is active!
+2025-01-24 08:04:52,439 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:05:09,274 - INFO - 127.0.0.1 - - [24/Jan/2025 08:05:09] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:05:11,237 - INFO - 127.0.0.1 - - [24/Jan/2025 08:05:11] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:05:31,279 - INFO - 127.0.0.1 - - [24/Jan/2025 08:05:31] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:05:48,599 - INFO - 127.0.0.1 - - [24/Jan/2025 08:05:48] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:06:04,042 - INFO - 127.0.0.1 - - [24/Jan/2025 08:06:04] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:06:33,965 - INFO - 127.0.0.1 - - [24/Jan/2025 08:06:33] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:07:05,733 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:07:06,482 - INFO -  * Restarting with stat
+2025-01-24 08:07:12,796 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 08:07:12,834 - WARNING -  * Debugger is active!
+2025-01-24 08:07:12,871 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:08:38,652 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:08:39,335 - INFO -  * Restarting with stat
+2025-01-24 08:08:45,117 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 08:08:45,132 - WARNING -  * Debugger is active!
+2025-01-24 08:08:45,138 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:09:04,839 - INFO - 127.0.0.1 - - [24/Jan/2025 08:09:04] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:09:12,351 - INFO - 127.0.0.1 - - [24/Jan/2025 08:09:12] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:09:21,306 - INFO - 127.0.0.1 - - [24/Jan/2025 08:09:21] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:09:29,704 - INFO - 127.0.0.1 - - [24/Jan/2025 08:09:29] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:10:20,568 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:10:21,325 - INFO -  * Restarting with stat
+2025-01-24 08:10:27,718 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 08:10:27,742 - WARNING -  * Debugger is active!
+2025-01-24 08:10:27,744 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:11:52,721 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:11:53,370 - INFO -  * Restarting with stat
+2025-01-24 08:11:59,353 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 08:11:59,353 - WARNING -  * Debugger is active!
+2025-01-24 08:11:59,373 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:12:28,854 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:12:29,377 - INFO -  * Restarting with stat
+2025-01-24 08:12:35,150 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 08:12:35,174 - WARNING -  * Debugger is active!
+2025-01-24 08:12:35,185 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:12:38,593 - INFO - 127.0.0.1 - - [24/Jan/2025 08:12:38] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:12:47,230 - INFO - 127.0.0.1 - - [24/Jan/2025 08:12:47] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:19:40,834 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:19:41,758 - INFO -  * Restarting with stat
+2025-01-24 08:19:55,133 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 08:19:55,212 - WARNING -  * Debugger is active!
+2025-01-24 08:19:55,233 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:21:51,083 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:21:51,928 - INFO -  * Restarting with stat
+2025-01-24 08:21:59,177 - INFO - Chatbot model loaded successfully
+2025-01-24 08:21:59,202 - WARNING -  * Debugger is active!
+2025-01-24 08:21:59,239 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:22:03,279 - INFO - 127.0.0.1 - - [24/Jan/2025 08:22:03] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:22:08,088 - INFO - 127.0.0.1 - - [24/Jan/2025 08:22:08] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:22:16,562 - INFO - 127.0.0.1 - - [24/Jan/2025 08:22:16] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:22:31,929 - INFO - 127.0.0.1 - - [24/Jan/2025 08:22:31] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:23:01,952 - INFO - 127.0.0.1 - - [24/Jan/2025 08:23:01] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:24:53,977 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:24:55,091 - INFO -  * Restarting with stat
+2025-01-24 08:25:01,569 - INFO - Chatbot model loaded successfully
+2025-01-24 08:25:01,593 - WARNING -  * Debugger is active!
+2025-01-24 08:25:01,601 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:25:18,077 - INFO - 127.0.0.1 - - [24/Jan/2025 08:25:18] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:25:19,695 - INFO - 127.0.0.1 - - [24/Jan/2025 08:25:19] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:25:20,937 - INFO - 127.0.0.1 - - [24/Jan/2025 08:25:20] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:25:42,198 - INFO - Chatbot model loaded successfully
+2025-01-24 08:25:42,265 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-01-24 08:25:42,265 - INFO - [33mPress CTRL+C to quit[0m
+2025-01-24 08:25:42,271 - INFO -  * Restarting with stat
+2025-01-24 08:25:47,748 - INFO - Chatbot model loaded successfully
+2025-01-24 08:25:47,762 - WARNING -  * Debugger is active!
+2025-01-24 08:25:47,767 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:26:21,407 - INFO - 127.0.0.1 - - [24/Jan/2025 08:26:21] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:26:22,789 - INFO - 127.0.0.1 - - [24/Jan/2025 08:26:22] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:26:30,639 - INFO - 127.0.0.1 - - [24/Jan/2025 08:26:30] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:30:19,111 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:30:19,811 - INFO -  * Restarting with stat
+2025-01-24 08:30:26,681 - INFO - Chatbot model loaded successfully
+2025-01-24 08:30:26,699 - WARNING -  * Debugger is active!
+2025-01-24 08:30:26,704 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:30:31,005 - INFO - 127.0.0.1 - - [24/Jan/2025 08:30:31] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:30:38,616 - INFO - 127.0.0.1 - - [24/Jan/2025 08:30:38] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:30:56,238 - INFO - 127.0.0.1 - - [24/Jan/2025 08:30:56] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:31:26,102 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:31:27,138 - INFO -  * Restarting with stat
+2025-01-24 08:31:34,321 - INFO - Chatbot model loaded successfully
+2025-01-24 08:31:34,343 - WARNING -  * Debugger is active!
+2025-01-24 08:31:34,349 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:31:39,498 - INFO - 127.0.0.1 - - [24/Jan/2025 08:31:39] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:31:47,461 - INFO - 127.0.0.1 - - [24/Jan/2025 08:31:47] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:31:58,671 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
+2025-01-24 08:31:59,303 - INFO -  * Restarting with stat
+2025-01-24 08:32:05,585 - INFO - Chatbot modeli baþarýyla yüklendi
+2025-01-24 08:32:05,603 - WARNING -  * Debugger is active!
+2025-01-24 08:32:05,610 - INFO -  * Debugger PIN: 785-109-991
+2025-01-24 08:32:09,405 - INFO - 127.0.0.1 - - [24/Jan/2025 08:32:09] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:32:23,184 - INFO - 127.0.0.1 - - [24/Jan/2025 08:32:23] "POST /chat HTTP/1.1" 200 -
+2025-01-24 08:34:31,439 - INFO -  * Detected change in 'c:\\Users\\sevgi\\OneDrive\\Masaüstü\\chatbot\\api.py', reloading
