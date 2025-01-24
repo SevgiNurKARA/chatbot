@@ -1,0 +1,5 @@
+2025-01-24 06:58:17,720 - INFO - Model yüklendi: saved_model
+2025-01-24 06:58:17,721 - INFO - Intent'ler yüklendi: 33 adet
+2025-01-24 06:58:17,722 - INFO - Yanýtlar yüklendi
+2025-01-24 06:59:14,195 - INFO - Düþük güven: [('Basýnç düþüklüðü', 0.2671677768230438), ('Su kaçaðý', 0.04907932132482529), ('EKS VS. NORMAL SAYAÇ', 0.04285198450088501)]
+2025-01-24 07:00:09,762 - INFO - Düþük güven: [('Basýnç düþüklüðü', 0.2899042069911957), ('Su kaçaðý', 0.04540705680847168), ('Su fiyatlarýnýn belirlenmesi', 0.03938506543636322)]
