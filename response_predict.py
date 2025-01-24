@@ -17,7 +17,7 @@ class ChatbotPredictor:
         self.model_dir = Path(model_dir)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.max_length = 512  # Model eğitimindeki max_length ile aynı olmalı
-        self.confidence_threshold = 0.6  # Güven eşiği
+        self.confidence_threshold = 0.1  # Güven eşiği
         self.setup_logging()
         self.load_model_and_tokenizer()
         self.load_intent_labels()

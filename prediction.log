@@ -3,3 +3,15 @@
 2025-01-24 06:58:17,722 - INFO - Yanýtlar yüklendi
 2025-01-24 06:59:14,195 - INFO - Düþük güven: [('Basýnç düþüklüðü', 0.2671677768230438), ('Su kaçaðý', 0.04907932132482529), ('EKS VS. NORMAL SAYAÇ', 0.04285198450088501)]
 2025-01-24 07:00:09,762 - INFO - Düþük güven: [('Basýnç düþüklüðü', 0.2899042069911957), ('Su kaçaðý', 0.04540705680847168), ('Su fiyatlarýnýn belirlenmesi', 0.03938506543636322)]
+2025-01-24 07:04:30,916 - INFO - Model yüklendi: saved_model
+2025-01-24 07:04:30,917 - INFO - Intent'ler yüklendi: 33 adet
+2025-01-24 07:04:30,919 - INFO - Yanýtlar yüklendi
+2025-01-24 07:05:35,313 - INFO - Düþük güven: [('Basýnç düþüklüðü', 0.21119213104248047), ('Karþýlama', 0.050072260200977325), ('Su sayacýnýn donmadan korunmasý', 0.04465559124946594)]
+2025-01-24 07:06:13,863 - INFO - Düþük güven: [('Basýnç düþüklüðü', 0.21119213104248047), ('Karþýlama', 0.050072260200977325), ('Su sayacýnýn donmadan korunmasý', 0.04465559124946594)]
+2025-01-24 07:06:24,538 - INFO - Düþük güven: [('SU BORCU', 0.15703541040420532), ('Fatura Ýtirazý', 0.14275136590003967), ('Fatura bilgisi öðrenilmesi', 0.07435350865125656)]
+2025-01-24 07:06:42,539 - INFO - Düþük güven: [('SU BORCU', 0.26974111795425415), ('Fatura bilgisi öðrenilmesi', 0.09097620844841003), ('Fatura itirazý', 0.044475995004177094)]
+2025-01-24 07:08:37,927 - INFO - Düþük güven: [('Abonelik bilgilerinin güncellenmesi', 0.07327652722597122), ('Karþýlama', 0.07044748961925507), ('EKS VS. NORMAL SAYAÇ', 0.05710984766483307)]
+2025-01-24 07:08:51,396 - INFO - Düþük güven: [('SU BORCU', 0.26974111795425415), ('Fatura bilgisi öðrenilmesi', 0.09097620844841003), ('Fatura itirazý', 0.044475995004177094)]
+2025-01-24 07:09:23,302 - INFO - Model yüklendi: saved_model
+2025-01-24 07:09:23,303 - INFO - Intent'ler yüklendi: 33 adet
+2025-01-24 07:09:23,305 - INFO - Yanýtlar yüklendi
