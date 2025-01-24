@@ -1,0 +1,110 @@
+{
+  "best_metric": 0.08333333333333333,
+  "best_model_checkpoint": "results\\checkpoint-54",
+  "epoch": 1.0,
+  "eval_steps": 500,
+  "global_step": 54,
+  "is_hyper_param_search": false,
+  "is_local_process_zero": true,
+  "is_world_process_zero": true,
+  "log_history": [
+    {
+      "epoch": 0.18518518518518517,
+      "grad_norm": 11.55328369140625,
+      "learning_rate": 4.0000000000000003e-07,
+      "loss": 3.5396,
+      "step": 10
+    },
+    {
+      "epoch": 0.37037037037037035,
+      "grad_norm": 22.60224151611328,
+      "learning_rate": 8.000000000000001e-07,
+      "loss": 3.5961,
+      "step": 20
+    },
+    {
+      "epoch": 0.5555555555555556,
+      "grad_norm": 10.287857055664062,
+      "learning_rate": 1.2000000000000002e-06,
+      "loss": 3.5492,
+      "step": 30
+    },
+    {
+      "epoch": 0.7407407407407407,
+      "grad_norm": 8.365943908691406,
+      "learning_rate": 1.6000000000000001e-06,
+      "loss": 3.5097,
+      "step": 40
+    },
+    {
+      "epoch": 0.9259259259259259,
+      "grad_norm": 8.60900592803955,
+      "learning_rate": 2.0000000000000003e-06,
+      "loss": 3.5156,
+      "step": 50
+    },
+    {
+      "epoch": 1.0,
+      "eval_accuracy": 0.08333333333333333,
+      "eval_f1_Abone hatt\u0131 ": 0,
+      "eval_f1_Abonelik bilgilerinin g\u00fcncellenmesi": 0.13333333333333333,
+      "eval_f1_Abonelik \u0130ptali": 0,
+      "eval_f1_Bas\u0131n\u00e7 d\u00fc\u015f\u00fckl\u00fc\u011f\u00fc": 0,
+      "eval_f1_EKS HAKKINDA": 0,
+      "eval_f1_EKS VS. NORMAL SAYA\u00c7": 0,
+      "eval_f1_EKS sorunu": 0,
+      "eval_f1_Fatura bilgilerinin farkl\u0131 kanallarla iletilmesi": 0,
+      "eval_f1_Fatura bilgisi \u00f6\u011frenilmesi": 0,
+      "eval_f1_Fatura itiraz\u0131": 0,
+      "eval_f1_Fatura son \u00f6deme tarihi": 0,
+      "eval_f1_Fatura \u0130tiraz\u0131": 0.36363636363636365,
+      "eval_f1_GE\u00c7M\u0130\u015e BORCU OLAN SUYUN KES\u0130LMES\u0130": 0,
+      "eval_f1_G\u00fcn\u00fc ge\u00e7mi\u015f faturan\u0131n bankadan \u00f6denememesi": 0,
+      "eval_f1_KISM\u0130 \u00d6DEME": 0,
+      "eval_f1_KUYU A\u00c7ILIMI": 0,
+      "eval_f1_Kanalizasyon ar\u0131zas\u0131 ": 0,
+      "eval_f1_Kar\u015f\u0131lama": 0,
+      "eval_f1_Ka\u00e7ak kuyu kullan\u0131m\u0131": 0,
+      "eval_f1_M\u00fckerrer \u00f6deme ": 0,
+      "eval_f1_SU BORCU": 0,
+      "eval_f1_Sayac": 0,
+      "eval_f1_Sayac\u0131n hatal\u0131 okunmas\u0131": 0,
+      "eval_f1_Su Kesintisi": 0.28571428571428575,
+      "eval_f1_Su fiyatlar\u0131n\u0131n belirlenmesi": 0,
+      "eval_f1_Su ka\u00e7a\u011f\u0131": 0,
+      "eval_f1_Su sayac\u0131n\u0131n donmadan korunmas\u0131": 0,
+      "eval_f1_Su sayac\u0131n\u0131n s\u00f6k\u00fclmesi": 0,
+      "eval_f1_Tahmini fatura d\u00fczenlenmesi": 0,
+      "eval_f1_Tahmini fatura \u00f6\u011frenilmesi": 0,
+      "eval_f1_Tatl\u0131 su \u00e7e\u015fmesinden su kullan\u0131m\u0131": 0,
+      "eval_f1_\u00c7evre Sulama": 0,
+      "eval_f1_\u0130ndirimli Su": 0,
+      "eval_loss": 3.4482901096343994,
+      "eval_runtime": 62.4787,
+      "eval_samples_per_second": 0.768,
+      "eval_steps_per_second": 0.096,
+      "step": 54
+    }
+  ],
+  "logging_steps": 10,
+  "max_steps": 810,
+  "num_input_tokens_seen": 0,
+  "num_train_epochs": 15,
+  "save_steps": 500,
+  "stateful_callbacks": {
+    "TrainerControl": {
+      "args": {
+        "should_epoch_stop": false,
+        "should_evaluate": false,
+        "should_log": false,
+        "should_save": true,
+        "should_training_stop": false
+      },
+      "attributes": {}
+    }
+  },
+  "total_flos": 113432428459008.0,
+  "train_batch_size": 8,
+  "trial_name": null,
+  "trial_params": null
+}

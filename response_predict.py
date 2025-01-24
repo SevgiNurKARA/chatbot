@@ -1,76 +1,148 @@
 import json
 import torch
-from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
-from sklearn.preprocessing import LabelEncoder
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import random
 import logging
+from pathlib import Path
 
-# Logging ayarları
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+class ChatbotPredictor:
+    def __init__(self, model_dir):
+        """
+        ChatbotPredictor sınıfını başlatır
+        Args:
+            model_dir: Eğitilmiş model ve gerekli dosyaların bulunduğu dizin
+        """
+        self.model_dir = Path(model_dir)
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.max_length = 256
+        self.setup_logging()
+        self.load_model_and_tokenizer()
+        self.load_intent_labels()
+        self.load_responses()
 
-def load_model_and_tokenizer(model_path):
+    def setup_logging(self):
+        """Logging ayarlarını yapılandırır"""
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(levelname)s - %(message)s'
+        )
+
+    def load_model_and_tokenizer(self):
+        """Model ve tokenizer'ı yükler"""
+        try:
+            self.model = AutoModelForSequenceClassification.from_pretrained(
+                self.model_dir
+            ).to(self.device)
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
+            self.model.eval()  # Değerlendirme moduna al
+            logging.info("Model ve tokenizer başarıyla yüklendi")
+        except Exception as e:
+            logging.error(f"Model ve tokenizer yüklenirken hata: {e}")
+            raise
+
+    def load_intent_labels(self):
+        """Intent etiketlerini yükler"""
+        try:
+            intent_file = self.model_dir / 'intent_labels.json'
+            with open(intent_file, 'r', encoding='utf-8') as f:
+                self.intent_labels = json.load(f)
+            logging.info(f"Intent etiketleri yüklendi: {len(self.intent_labels)} adet")
+        except Exception as e:
+            logging.error(f"Intent etiketleri yüklenirken hata: {e}")
+            raise
+
+    def load_responses(self):
+        """Yanıtları chatbot_data.json dosyasından yükler"""
+        try:
+            with open('chatbot_data.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            self.responses = {
+                intent['intent']: intent.get('responses', ["Üzgünüm, bu konuda yanıt veremiyorum."])
+                for intent in data['intents']
+            }
+            logging.info("Yanıtlar başarıyla yüklendi")
+        except Exception as e:
+            logging.error(f"Yanıtlar yüklenirken hata: {e}")
+            raise
+
+    def predict(self, text):
+        """
+        Verilen metin için intent tahmininde bulunur
+        Args:
+            text: Tahmin edilecek metin
+        Returns:
+            predicted_intent: Tahmin edilen intent
+        """
+        try:
+            # Metni tokenize et
+            inputs = self.tokenizer(
+                text,
+                truncation=True,
+                padding=True,
+                max_length=self.max_length,
+                return_tensors="pt"
+            ).to(self.device)
+
+            # Tahmin yap
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+                probabilities = torch.nn.functional.softmax(outputs.logits, dim=1)
+                confidence, predicted_class = torch.max(probabilities, dim=1)
+
+            # Eğer güven değeri düşükse None döndür
+            if confidence.item() < 0.5:
+                return None
+
+            # Intent'i döndür
+            predicted_intent = self.intent_labels[predicted_class.item()]
+            return predicted_intent
+
+        except Exception as e:
+            logging.error(f"Tahmin yapılırken hata: {e}")
+            return None
+
+    def get_response(self, intent):
+        """
+        Verilen intent için rastgele bir yanıt seçer
+        Args:
+            intent: Yanıt seçilecek intent
+        Returns:
+            str: Seçilen yanıt
+        """
+        responses = self.responses.get(intent, ["Üzgünüm, bu konuda yanıt veremiyorum."])
+        return random.choice(responses)
+
+def main():
+    # Chatbot'u başlat
     try:
-        model = DistilBertForSequenceClassification.from_pretrained(model_path)
-        tokenizer = DistilBertTokenizerFast.from_pretrained(model_path)
-        return model, tokenizer
+        predictor = ChatbotPredictor("saved_model")
+        print("Chatbot başlatıldı! Çıkmak için 'quit' yazın.")
+        
+        while True:
+            # Kullanıcı girdisini al
+            user_input = input("\nSiz: ").strip()
+            
+            # Çıkış kontrolü
+            if user_input.lower() == 'quit':
+                print("Chatbot: Görüşmek üzere!")
+                break
+            
+            # Boş girdi kontrolü
+            if not user_input:
+                print("Chatbot: Lütfen bir şeyler yazın.")
+                continue
+            
+            # Tahminde bulun ve yanıt ver
+            predicted_intent = predictor.predict(user_input)
+            if predicted_intent:
+                response = predictor.get_response(predicted_intent)
+                print(f"Chatbot: {response}")
+            else:
+                print("Chatbot: Üzgünüm, sizi anlayamadım. Lütfen tekrar dener misiniz?")
+
     except Exception as e:
-        logging.error(f"Model ve tokenizer yüklenirken hata: {e}")
-        return None, None
-
-def load_label_encoder_and_responses(file_path):
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        intents = data['intents']
-        labels = [intent['intent'] for intent in intents]
-        responses = {intent['intent']: intent['responses'] for intent in intents}
-        label_encoder = LabelEncoder()
-        label_encoder.fit(labels)
-        return label_encoder, responses
-    except Exception as e:
-        logging.error(f"Etiket kodlayıcı ve cevaplar yüklenirken hata: {e}")
-        return None, None
-
-def predict(model, tokenizer, label_encoder, text):
-    try:
-        inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512)
-        with torch.no_grad():
-            outputs = model(**inputs)
-        predicted_class = torch.argmax(outputs.logits, dim=1).item()
-        predicted_intent = label_encoder.inverse_transform([predicted_class])[0]
-        return predicted_intent
-    except Exception as e:
-        logging.error(f"Tahmin yapılırken hata: {e}")
-        return None
-
-def get_response(intent, responses):
-    import random
-    return random.choice(responses.get(intent, ["Üzgünüm, bu konuda bir cevabım yok."]))
-
-def chatbot():
-    model_path = './saved_model'
-    data_file_path = 'chatbot_data.json'  # Orijinal veri dosyasının yolu
-
-    model, tokenizer = load_model_and_tokenizer(model_path)
-    label_encoder, responses = load_label_encoder_and_responses(data_file_path)
-
-    if model is None or tokenizer is None or label_encoder is None or responses is None:
-        print("Chatbot başlatılamadı. Lütfen hata mesajlarını kontrol edin.")
-        return
-
-    print("Chatbot hazır! Çıkmak için 'quit' yazın.")
-    
-    while True:
-        user_input = input("Siz: ")
-        if user_input.lower() == 'quit':
-            print("Chatbot: Görüşmek üzere!")
-            break
-
-        predicted_intent = predict(model, tokenizer, label_encoder, user_input)
-        if predicted_intent:
-            response = get_response(predicted_intent, responses)
-            print(f"Chatbot: {response}")
-        else:
-            print("Chatbot: Üzgünüm, şu anda cevap veremiyorum. Lütfen tekrar deneyin.")
+        logging.error(f"Chatbot çalışırken hata oluştu: {e}")
+        print("Chatbot başlatılırken bir hata oluştu. Lütfen log dosyasını kontrol edin.")
 
 if __name__ == "__main__":
-    chatbot()
+    main()
