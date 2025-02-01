@@ -29,31 +29,21 @@ logging.basicConfig(
     ]
 )
 
-# Sahte fatura veritabanı
-FAKE_BILL_DATABASE = {
-    # TC - Doğum Tarihi kombinasyonları
-    "tc_bills": {
-        ("12345678901", "1990-01-01"): {
-            "bill_amount": 150.75,
-            "water_usage": 15.3,
-            "bill_date": "2024-03-01"
-        },
-        ("98765432109", "1985-05-15"): {
-            "bill_amount": 220.50,
-            "water_usage": 22.1,
-            "bill_date": "2024-03-01"
-        }
-    },
-    # Abone No - Doğum Tarihi kombinasyonları
-    "subscriber_bills": {
+# Sahte fatura veritabanı - Yeni yapı
+BILL_DATABASE = {
+    # TC: (Abone No, Doğum Tarihi): Fatura Bilgileri
+    "12345678901": {
         ("123456", "1990-01-01"): {
             "bill_amount": 150.75,
             "water_usage": 15.3,
             "bill_date": "2024-03-01"
-        },
-        ("789012", "1985-05-15"): {
-            "bill_amount": 220.50,
-            "water_usage": 22.1,
+        }
+    },
+    # Abone No: (Doğum Tarihi): Fatura Bilgileri
+    "123456": {
+        "1990-01-01": {
+            "bill_amount": 150.75,
+            "water_usage": 15.3,
             "bill_date": "2024-03-01"
         }
     }
@@ -96,12 +86,17 @@ def validate_date(date_str):
     except ValueError:
         return False
 
-def get_bill_info(identifier, birth_date, query_type="tc"):
+def get_bill_info(identifier, birth_date, subscriber_no=None):
     """Fatura bilgilerini getir"""
-    if query_type == "tc":
-        return FAKE_BILL_DATABASE["tc_bills"].get((identifier, birth_date))
-    else:
-        return FAKE_BILL_DATABASE["subscriber_bills"].get((identifier, birth_date))
+    try:
+        if len(identifier) == 11:  # TC ile sorgu
+            if subscriber_no:
+                return BILL_DATABASE.get(identifier, {}).get((subscriber_no, birth_date))
+        else:  # Abone no ile sorgu
+            return BILL_DATABASE.get(identifier, {}).get(birth_date)
+    except Exception as e:
+        logging.error(f"Fatura bilgisi getirme hatası: {e}")
+        return None
 
 class UserMemory:
     def __init__(self):
@@ -344,6 +339,11 @@ class ChatbotManager:
 # Global instances
 chatbot = ChatbotManager()
 
+def get_current_time():
+    """Güncel saati formatla"""
+    now = datetime.now()
+    return now.strftime("%H:%M:%S")
+
 @app.route('/api/chat/<session_id>', methods=['POST', 'OPTIONS'])
 def chat_with_mem(session_id):
     """Chat endpoint'i"""
@@ -375,118 +375,93 @@ def chat_with_mem(session_id):
             if not context.get("type"):
                 user_memory.update_session(session_id, "context", {
                     "type": "bill_query_start",
-                    "step": "method_selection"
+                    "step": "waiting_identifier"
                 })
                 return jsonify({
-                    "response": "Fatura sorgulaması için iki yöntem mevcut:\n1. TC Kimlik No ile sorgulama\n2. Abone No ile sorgulama\nHangi yöntemle devam etmek istersiniz? (1 veya 2 yazınız)",
-                    "expecting": "method_choice"
+                    "response": "Lütfen TC Kimlik Numaranızı (11 haneli) veya Abone Numaranızı (6 haneli) giriniz:",
+                    "expecting": "identifier"
                 })
             
-            # Kullanıcı yöntem seçimi yapıyor
-            if context.get("type") == "bill_query_start":
-                if "1" in user_message or "tc" in user_message:
+            # TC veya Abone No girişi
+            if context.get("step") == "waiting_identifier":
+                identifier = ''.join(filter(str.isdigit, user_message))
+                
+                if len(identifier) == 11 and validate_tc(identifier):  # TC girildiyse
                     user_memory.update_session(session_id, "context", {
-                        "type": "bill_query_tc",
-                        "step": "waiting_tc"
-                    })
-                    return jsonify({
-                        "response": "Lütfen 11 haneli TC Kimlik numaranızı giriniz:",
-                        "expecting": "tc_no"
-                    })
-                elif "2" in user_message or "abone" in user_message:
-                    user_memory.update_session(session_id, "context", {
-                        "type": "bill_query_subscriber",
-                        "step": "waiting_subscriber"
+                        "type": "bill_query",
+                        "step": "waiting_subscriber",
+                        "tc_no": identifier
                     })
                     return jsonify({
                         "response": "Lütfen 6 haneli abone numaranızı giriniz:",
                         "expecting": "subscriber_no"
                     })
+                elif len(identifier) == 6 and validate_subscriber_no(identifier):  # Abone No girildiyse
+                    user_memory.update_session(session_id, "context", {
+                        "type": "bill_query",
+                        "step": "waiting_birth_date",
+                        "subscriber_no": identifier
+                    })
+                    return jsonify({
+                        "response": "Lütfen doğum tarihinizi YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
+                        "expecting": "birth_date"
+                    })
                 else:
                     return jsonify({
-                        "response": "Geçersiz seçim. Lütfen 1 (TC ile sorgulama) veya 2 (Abone No ile sorgulama) yazınız.",
-                        "expecting": "method_choice"
+                        "response": "Geçersiz giriş. Lütfen 11 haneli TC Kimlik Numarası veya 6 haneli Abone Numarası giriniz:",
+                        "expecting": "identifier"
                     })
             
-            # TC ile sorgulama süreci
-            if context.get("type") == "bill_query_tc":
-                if context.get("step") == "waiting_tc":
-                    tc_no = ''.join(filter(str.isdigit, user_message))
-                    if validate_tc(tc_no):
-                        user_memory.update_session(session_id, "context", {
-                            "type": "bill_query_tc",
-                            "step": "waiting_birth_date",
-                            "tc_no": tc_no
-                        })
-                        return jsonify({
-                            "response": "Lütfen doğum tarihinizi YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
-                            "expecting": "birth_date"
-                        })
-                    else:
-                        return jsonify({
-                            "response": "Geçersiz TC Kimlik numarası. Lütfen 11 haneli TC Kimlik numaranızı giriniz:",
-                            "expecting": "tc_no"
-                        })
-                elif context.get("step") == "waiting_birth_date":
-                    if validate_date(user_message):
-                        tc_no = context.get("tc_no")
-                        bill_info = get_bill_info(tc_no, user_message, "tc")
-                        if bill_info:
-                            response = (
-                                f"Fatura Bilgileriniz:\n"
-                                f"Fatura Tutarı: {bill_info['bill_amount']} TL\n"
-                                f"Kullanılan Su Miktarı: {bill_info['water_usage']} m³\n"
-                                f"Fatura Tarihi: {bill_info['bill_date']}"
-                            )
-                        else:
-                            response = "Bu bilgilerle eşleşen fatura bulunamadı."
-                        user_memory.update_session(session_id, "context", {})  # Context'i temizle
-                        return jsonify({"response": response})
-                    else:
-                        return jsonify({
-                            "response": "Geçersiz tarih formatı. Lütfen YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
-                            "expecting": "birth_date"
-                        })
+            # TC ile sorgulama - Abone No bekleniyor
+            if context.get("step") == "waiting_subscriber":
+                subscriber_no = ''.join(filter(str.isdigit, user_message))
+                if validate_subscriber_no(subscriber_no):
+                    user_memory.update_session(session_id, "context", {
+                        "type": "bill_query",
+                        "step": "waiting_birth_date",
+                        "tc_no": context.get("tc_no"),
+                        "subscriber_no": subscriber_no
+                    })
+                    return jsonify({
+                        "response": "Lütfen doğum tarihinizi YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
+                        "expecting": "birth_date"
+                    })
+                else:
+                    return jsonify({
+                        "response": "Geçersiz abone numarası. Lütfen 6 haneli abone numaranızı giriniz:",
+                        "expecting": "subscriber_no"
+                    })
             
-            # Abone No ile sorgulama süreci
-            if context.get("type") == "bill_query_subscriber":
-                if context.get("step") == "waiting_subscriber":
-                    subscriber_no = ''.join(filter(str.isdigit, user_message))
-                    if validate_subscriber_no(subscriber_no):
-                        user_memory.update_session(session_id, "context", {
-                            "type": "bill_query_subscriber",
-                            "step": "waiting_birth_date",
-                            "subscriber_no": subscriber_no
-                        })
-                        return jsonify({
-                            "response": "Lütfen doğum tarihinizi YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
-                            "expecting": "birth_date"
-                        })
+            # Doğum tarihi bekleniyor
+            if context.get("step") == "waiting_birth_date":
+                if validate_date(user_message):
+                    tc_no = context.get("tc_no")
+                    subscriber_no = context.get("subscriber_no")
+                    
+                    # TC ile sorgulama
+                    if tc_no:
+                        bill_info = get_bill_info(tc_no, user_message, subscriber_no)
+                    # Abone no ile sorgulama
                     else:
-                        return jsonify({
-                            "response": "Geçersiz abone numarası. Lütfen 6 haneli abone numaranızı giriniz:",
-                            "expecting": "subscriber_no"
-                        })
-                elif context.get("step") == "waiting_birth_date":
-                    if validate_date(user_message):
-                        subscriber_no = context.get("subscriber_no")
-                        bill_info = get_bill_info(subscriber_no, user_message, "subscriber")
-                        if bill_info:
-                            response = (
-                                f"Fatura Bilgileriniz:\n"
-                                f"Fatura Tutarı: {bill_info['bill_amount']} TL\n"
-                                f"Kullanılan Su Miktarı: {bill_info['water_usage']} m³\n"
-                                f"Fatura Tarihi: {bill_info['bill_date']}"
-                            )
-                        else:
-                            response = "Bu bilgilerle eşleşen fatura bulunamadı."
-                        user_memory.update_session(session_id, "context", {})  # Context'i temizle
-                        return jsonify({"response": response})
+                        bill_info = get_bill_info(subscriber_no, user_message)
+                    
+                    if bill_info:
+                        response = (
+                            f"Fatura Bilgileriniz:\n"
+                            f"Fatura Tutarı: {bill_info['bill_amount']} TL\n"
+                            f"Kullanılan Su Miktarı: {bill_info['water_usage']} m³\n"
+                            f"Fatura Tarihi: {bill_info['bill_date']}"
+                        )
                     else:
-                        return jsonify({
-                            "response": "Geçersiz tarih formatı. Lütfen YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
-                            "expecting": "birth_date"
-                        })
+                        response = "Bu bilgilerle eşleşen fatura bulunamadı."
+                    
+                    user_memory.update_session(session_id, "context", {})  # Context'i temizle
+                    return jsonify({"response": response})
+                else:
+                    return jsonify({
+                        "response": "Geçersiz tarih formatı. Lütfen YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
+                        "expecting": "birth_date"
+                    })
         
         # Döviz kuru sorgusu
         elif any(word in user_message for word in ["döviz", "kur", "euro", "dolar", "sterlin", "usd", "eur", "gbp"]):
@@ -523,6 +498,13 @@ def chat_with_mem(session_id):
                     "response": "Geçersiz şehir ismi. Lütfen Türkiye'deki bir şehir adı giriniz.",
                     "expecting": "city"
                 })
+        
+        # Saat sorgusu
+        elif any(word in user_message for word in ["saat kaç", "saat", "saat kaç?"]):
+            current_time = get_current_time()
+            return jsonify({
+                "response": f"Şu anki saat: {current_time}"
+            })
         
         # Diğer durumlar için chatbot'a sor
         else:
