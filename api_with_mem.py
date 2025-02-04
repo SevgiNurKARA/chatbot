@@ -8,6 +8,7 @@ import requests
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import xml.etree.ElementTree as ET
+import os
 
 app = Flask(__name__)
 
@@ -85,6 +86,12 @@ TURKEY_CITIES = [
     "karaman", "kırıkkale", "batman", "şırnak", "bartın", "ardahan", "ığdır", "yalova", "karabük", 
     "kilis", "osmaniye", "düzce"
 ]
+
+# Şikayet veritabanı
+COMPLAINTS_DATABASE = {
+    "complaints": [],
+    "last_complaint_id": 0
+}
 
 def validate_tc(tc_no):
     """TC Kimlik numarası doğrulama"""
@@ -382,6 +389,56 @@ def check_water_outage(district):
     else:
         return f"{district.capitalize()} bölgesinde şu anda su kesintisi bulunmamaktadır.\nSon güncelleme: {outage_info['last_update']}"
 
+def save_complaint(complaint_data):
+    """Şikayet bilgilerini kaydet"""
+    try:
+        # Şikayet ID'sini artır
+        COMPLAINTS_DATABASE["last_complaint_id"] += 1
+        complaint_id = COMPLAINTS_DATABASE["last_complaint_id"]
+        
+        # Şikayet bilgilerini hazırla
+        complaint = {
+            "id": complaint_id,
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "subscriber_no": complaint_data["subscriber_no"],
+            "birth_date": complaint_data["birth_date"],
+            "address": complaint_data["address"],
+            "status": "Yeni",
+            "notification_sent": True
+        }
+        
+        # Şikayeti kaydet
+        COMPLAINTS_DATABASE["complaints"].append(complaint)
+        
+        # Şikayetleri dosyaya kaydet
+        save_complaints_to_file()
+        
+        return complaint_id
+    except Exception as e:
+        logging.error(f"Şikayet kaydetme hatası: {e}")
+        return None
+
+def save_complaints_to_file():
+    """Şikayetleri JSON dosyasına kaydet"""
+    try:
+        with open('complaints.json', 'w', encoding='utf-8') as f:
+            json.dump(COMPLAINTS_DATABASE, f, ensure_ascii=False, indent=4)
+    except Exception as e:
+        logging.error(f"Şikayet dosyası kaydetme hatası: {e}")
+
+def load_complaints_from_file():
+    """Şikayetleri JSON dosyasından yükle"""
+    try:
+        if os.path.exists('complaints.json'):
+            with open('complaints.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                COMPLAINTS_DATABASE.update(data)
+    except Exception as e:
+        logging.error(f"Şikayet dosyası yükleme hatası: {e}")
+
+# Uygulama başlangıcında şikayetleri yükle
+load_complaints_from_file()
+
 @app.route('/api/chat/<session_id>', methods=['POST', 'OPTIONS'])
 def chat_with_mem(session_id):
     """Chat endpoint'i"""
@@ -555,6 +612,80 @@ def chat_with_mem(session_id):
                 outage_info = check_water_outage(district)
                 user_memory.update_session(session_id, "context", {})  # Context'i temizle
                 return jsonify({"response": outage_info})
+        
+        # Su sayacı şikayet sistemi
+        elif "sayaç" in user_message or "arıza" in user_message or context.get("type", "").startswith("meter_complaint"):
+            if not context.get("type"):
+                user_memory.update_session(session_id, "context", {
+                    "type": "meter_complaint",
+                    "step": "waiting_subscriber",
+                    "complaint_data": {}
+                })
+                return jsonify({
+                    "response": "Su sayacı şikayetinizi almak için bazı bilgilere ihtiyacım var.\nLütfen 6 haneli abone numaranızı giriniz:",
+                    "expecting": "subscriber_no"
+                })
+            
+            complaint_context = context.get("complaint_data", {})
+            
+            # Abone no bekleniyor
+            if context.get("step") == "waiting_subscriber":
+                subscriber_no = ''.join(filter(str.isdigit, user_message))
+                if validate_subscriber_no(subscriber_no):
+                    complaint_context["subscriber_no"] = subscriber_no
+                    user_memory.update_session(session_id, "context", {
+                        "type": "meter_complaint",
+                        "step": "waiting_birth_date",
+                        "complaint_data": complaint_context
+                    })
+                    return jsonify({
+                        "response": "Lütfen doğum tarihinizi YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
+                        "expecting": "birth_date"
+                    })
+                else:
+                    return jsonify({
+                        "response": "Geçersiz abone numarası. Lütfen 6 haneli abone numaranızı giriniz:",
+                        "expecting": "subscriber_no"
+                    })
+            
+            # Doğum tarihi bekleniyor
+            elif context.get("step") == "waiting_birth_date":
+                if validate_date(user_message):
+                    complaint_context["birth_date"] = user_message
+                    user_memory.update_session(session_id, "context", {
+                        "type": "meter_complaint",
+                        "step": "waiting_address",
+                        "complaint_data": complaint_context
+                    })
+                    return jsonify({
+                        "response": "Lütfen açık adresinizi giriniz:",
+                        "expecting": "address"
+                    })
+                else:
+                    return jsonify({
+                        "response": "Geçersiz tarih formatı. Lütfen YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
+                        "expecting": "birth_date"
+                    })
+            
+            # Adres bekleniyor
+            elif context.get("step") == "waiting_address":
+                complaint_context["address"] = user_message
+                
+                # Şikayeti kaydet
+                complaint_id = save_complaint(complaint_context)
+                
+                if complaint_id:
+                    response = (
+                        f"Şikayetiniz başarıyla kaydedildi.\n"
+                        f"Şikayet Numaranız: #{complaint_id}\n"
+                        f"İlgili birimlerimiz en kısa sürede sizinle iletişime geçecektir.\n"
+                        f"Bizi bilgilendirdiğiniz için teşekkür ederiz."
+                    )
+                else:
+                    response = "Şikayetiniz kaydedilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
+                
+                user_memory.update_session(session_id, "context", {})  # Context'i temizle
+                return jsonify({"response": response})
         
         # Saat sorgusu
         elif any(word in user_message for word in ["saat kaç", "saat", "saat kaç?"]):
