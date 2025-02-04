@@ -19,8 +19,6 @@ logging.basicConfig(
     ]
 )
 
-# OpenWeatherMap API anahtarı
-WEATHER_API_KEY = "7549d0b1ceff6a105a44074f3df577e9"
 TURKEY_CITIES = [
     "adana", "adıyaman", "afyonkarahisar", "ağrı", "amasya", "ankara", "antalya", "artvin", 
     "aydın", "balıkesir", "bilecik", "bingöl", "bitlis", "bolu", "burdur", "bursa", "çanakkale", 
