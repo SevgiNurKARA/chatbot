@@ -49,6 +49,26 @@ BILL_DATABASE = {
     }
 }
 
+# Sahte su kesintisi veritabanı
+WATER_OUTAGE_DATABASE = {
+    "karşıyaka": {
+        "status": True,  # Kesinti var
+        "start_time": "2024-03-14 10:00:00",
+        "end_time": "2024-03-14 18:00:00",
+        "reason": "Ana boru hattı bakımı"
+    },
+    "bornova": {
+        "status": False,  # Kesinti yok
+        "last_update": "2024-03-14 09:00:00"
+    },
+    "konak": {
+        "status": True,
+        "start_time": "2024-03-14 09:00:00",
+        "end_time": "2024-03-14 16:00:00",
+        "reason": "Acil altyapı çalışması"
+    }
+}
+
 # API Anahtarları
 WEATHER_API_KEY = "7549d0b1ceff6a105a44074f3df577e9"
 
@@ -344,6 +364,24 @@ def get_current_time():
     now = datetime.now()
     return now.strftime("%H:%M:%S")
 
+def check_water_outage(district):
+    """Su kesintisi kontrolü"""
+    district = district.lower()
+    outage_info = WATER_OUTAGE_DATABASE.get(district)
+    
+    if not outage_info:
+        return "Bu mahalle için bilgi bulunamadı."
+    
+    if outage_info["status"]:
+        return (
+            f"{district.capitalize()} bölgesinde su kesintisi var.\n"
+            f"Başlangıç: {outage_info['start_time']}\n"
+            f"Bitiş: {outage_info['end_time']}\n"
+            f"Sebep: {outage_info['reason']}"
+        )
+    else:
+        return f"{district.capitalize()} bölgesinde şu anda su kesintisi bulunmamaktadır.\nSon güncelleme: {outage_info['last_update']}"
+
 @app.route('/api/chat/<session_id>', methods=['POST', 'OPTIONS'])
 def chat_with_mem(session_id):
     """Chat endpoint'i"""
@@ -498,6 +536,25 @@ def chat_with_mem(session_id):
                     "response": "Geçersiz şehir ismi. Lütfen Türkiye'deki bir şehir adı giriniz.",
                     "expecting": "city"
                 })
+        
+        # Su kesintisi sorgusu
+        elif "su kesintisi" in user_message or context.get("type") == "water_outage_query":
+            if not context.get("type"):
+                user_memory.update_session(session_id, "context", {
+                    "type": "water_outage_query",
+                    "step": "waiting_district"
+                })
+                return jsonify({
+                    "response": "Hangi mahalle için su kesintisi bilgisi istersiniz?",
+                    "expecting": "district"
+                })
+            
+            # Mahalle bekleniyor
+            if context.get("step") == "waiting_district":
+                district = user_message.strip()
+                outage_info = check_water_outage(district)
+                user_memory.update_session(session_id, "context", {})  # Context'i temizle
+                return jsonify({"response": outage_info})
         
         # Saat sorgusu
         elif any(word in user_message for word in ["saat kaç", "saat", "saat kaç?"]):
