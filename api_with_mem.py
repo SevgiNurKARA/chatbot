@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 import logging
 from pathlib import Path
@@ -70,6 +70,12 @@ WATER_OUTAGE_DATABASE = {
     }
 }
 
+# Şikayet veritabanı
+COMPLAINTS_DATABASE = {
+    "complaints": [],
+    "last_complaint_id": 0
+}
+
 # Türkiye şehirleri
 TURKEY_CITIES = [
     "adana", "adıyaman", "afyonkarahisar", "ağrı", "amasya", "ankara", "antalya", "artvin", 
@@ -83,44 +89,6 @@ TURKEY_CITIES = [
     "karaman", "kırıkkale", "batman", "şırnak", "bartın", "ardahan", "ığdır", "yalova", "karabük", 
     "kilis", "osmaniye", "düzce"
 ]
-
-# Şikayet veritabanı
-COMPLAINTS_DATABASE = {
-    "complaints": [],
-    "last_complaint_id": 0
-}
-
-def validate_tc(tc_no):
-    """TC Kimlik numarası doğrulama"""
-    if not tc_no.isdigit() or len(tc_no) != 11:
-        return False
-    return True
-
-def validate_subscriber_no(subscriber_no):
-    """Abone numarası doğrulama"""
-    if not subscriber_no.isdigit() or len(subscriber_no) != 6:
-        return False
-    return True
-
-def validate_date(date_str):
-    """Tarih formatı doğrulama (YYYY-MM-DD)"""
-    try:
-        datetime.strptime(date_str, '%Y-%m-%d')
-        return True
-    except ValueError:
-        return False
-
-def get_bill_info(identifier, birth_date, subscriber_no=None):
-    """Fatura bilgilerini getir"""
-    try:
-        if len(identifier) == 11:  # TC ile sorgu
-            if subscriber_no:
-                return BILL_DATABASE.get(identifier, {}).get((subscriber_no, birth_date))
-        else:  # Abone no ile sorgu
-            return BILL_DATABASE.get(identifier, {}).get(birth_date)
-    except Exception as e:
-        logging.error(f"Fatura bilgisi getirme hatası: {e}")
-        return None
 
 class UserMemory:
     def __init__(self):
@@ -190,58 +158,37 @@ class UserMemory:
 # Global instance
 user_memory = UserMemory()
 
-@app.route('/', methods=['GET'])
-def home():
-    """Ana endpoint"""
-    return jsonify({
-        "status": "success",
-        "message": "API çalışıyor",
-        "endpoints": {
-            "session": "/api/session",
-            "chat": "/api/chat/[session_id]"
-        }
-    })
+def validate_tc(tc_no):
+    """TC Kimlik numarası doğrulama"""
+    if not tc_no.isdigit() or len(tc_no) != 11:
+        return False
+    return True
 
-@app.route('/api/session', methods=['GET', 'OPTIONS'])
-def get_active_session():
-    """Yeni bir session başlat"""
-    if request.method == 'OPTIONS':
-        return jsonify({"status": "success"})
-        
-    new_session_id = user_memory.create_new_session()
-    
-    # Session ID'yi kontrol et
-    if not new_session_id:
-        return jsonify({
-            "error": "Session oluşturulamadı"
-        }), 500
-        
-    # Session bilgilerini döndür
-    return jsonify({
-        "status": "success",
-        "session_id": new_session_id,
-        "chat_endpoint": f"/api/chat/{new_session_id}",
-        "message": "Session başarıyla oluşturuldu"
-    })
+def validate_subscriber_no(subscriber_no):
+    """Abone numarası doğrulama"""
+    if not subscriber_no.isdigit() or len(subscriber_no) != 6:
+        return False
+    return True
 
-def get_weather(city):
-    """Hava durumu bilgisini getir"""
-    base_url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric&lang=tr"
+def validate_date(date_str):
+    """Tarih formatı doğrulama (YYYY-MM-DD)"""
     try:
-        response = requests.get(base_url)
-        response.raise_for_status()
-        weather_data = response.json()
-        temp = weather_data['main']['temp']
-        feels_like = weather_data['main']['feels_like']
-        humidity = weather_data['main']['humidity']
-        description = weather_data['weather'][0]['description']
-        return f"{city.capitalize()} için hava durumu:\nSıcaklık: {temp}°C\nHissedilen: {feels_like}°C\nNem: %{humidity}\nDurum: {description}"
-    except requests.exceptions.RequestException as e:
-        logging.error(f"Hava durumu API hatası: {e}")
-        return "Hava durumu bilgisi alınamadı."
-    except KeyError as e:
-        logging.error(f"Hava durumu veri hatası: {e}")
-        return "Hava durumu verisi işlenirken hata oluştu."
+        datetime.strptime(date_str, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
+
+def get_bill_info(identifier, birth_date, subscriber_no=None):
+    """Fatura bilgilerini getir"""
+    try:
+        if len(identifier) == 11:  # TC ile sorgu
+            if subscriber_no:
+                return BILL_DATABASE.get(identifier, {}).get((subscriber_no, birth_date))
+        else:  # Abone no ile sorgu
+            return BILL_DATABASE.get(identifier, {}).get(birth_date)
+    except Exception as e:
+        logging.error(f"Fatura bilgisi getirme hatası: {e}")
+        return None
 
 def get_exchange_rate():
     """TCMB'den güncel döviz kurlarını çek"""
@@ -291,77 +238,24 @@ def get_exchange_rate():
         logging.error(f"Döviz kuru hatası: {e}")
         return "Döviz kuru bilgisi alınamadı."
 
-def extract_city_from_message(message):
-    """Mesajdan şehir ismini çıkar"""
-    message = message.lower()
-    for city in TURKEY_CITIES:
-        if city in message:
-            return city
-    return None
-
-class ChatbotManager:
-    def __init__(self):
-        self.model_dir = "saved_model"
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.max_length = 512
-        self.confidence_threshold = 0.1
-        self.setup_model()
-        
-    def setup_model(self):
-        try:
-            self.model = AutoModelForSequenceClassification.from_pretrained(
-                self.model_dir
-            ).to(self.device)
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
-            self.model.eval()
-            
-            with open(Path(self.model_dir) / 'intent_labels.json', 'r', encoding='utf-8') as f:
-                self.intent_labels = json.load(f)
-                
-            with open(Path(self.model_dir) / 'responses.json', 'r', encoding='utf-8') as f:
-                self.responses = json.load(f)
-                
-            logging.info("Chatbot modeli başarıyla yüklendi")
-        except Exception as e:
-            logging.error(f"Chatbot modeli yüklenirken hata: {e}")
-            raise
-            
-    def predict(self, text):
-        try:
-            inputs = self.tokenizer(
-                text,
-                truncation=True,
-                padding=True,
-                max_length=self.max_length,
-                return_tensors="pt"
-            ).to(self.device)
-            
-            with torch.no_grad():
-                outputs = self.model(**inputs)
-                probabilities = torch.nn.functional.softmax(outputs.logits, dim=1)[0]
-                confidence, predicted_class = torch.max(probabilities, dim=0)
-                
-                if confidence.item() >= self.confidence_threshold:
-                    intent = self.intent_labels[predicted_class.item()]
-                    response = self.get_response(intent)
-                    return response, intent, confidence.item()
-                    
-                return None, None, confidence.item()
-                
-        except Exception as e:
-            logging.error(f"Tahmin hatası: {e}")
-            return None, None, 0.0
-            
-    def get_response(self, intent):
-        try:
-            available_responses = self.responses.get(intent, ["Üzgünüm, bu konuda yardımcı olamıyorum."])
-            return available_responses[0]
-        except Exception as e:
-            logging.error(f"Yanıt seçme hatası: {e}")
-            return "Bir hata oluştu."
-
-# Global instances
-chatbot = ChatbotManager()
+def get_weather(city):
+    """Hava durumu bilgisini getir"""
+    base_url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric&lang=tr"
+    try:
+        response = requests.get(base_url)
+        response.raise_for_status()
+        weather_data = response.json()
+        temp = weather_data['main']['temp']
+        feels_like = weather_data['main']['feels_like']
+        humidity = weather_data['main']['humidity']
+        description = weather_data['weather'][0]['description']
+        return f"{city.capitalize()} için hava durumu:\nSıcaklık: {temp}°C\nHissedilen: {feels_like}°C\nNem: %{humidity}\nDurum: {description}"
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Hava durumu API hatası: {e}")
+        return "Hava durumu bilgisi alınamadı."
+    except KeyError as e:
+        logging.error(f"Hava durumu veri hatası: {e}")
+        return "Hava durumu verisi işlenirken hata oluştu."
 
 def get_current_time():
     """Güncel saati formatla"""
@@ -389,6 +283,12 @@ def check_water_outage(district):
 def save_complaint(complaint_data):
     """Şikayet bilgilerini kaydet"""
     try:
+        # Gerekli alanların kontrolü
+        required_fields = ["complaint_type", "description", "subscriber_no", "birth_date", "address"]
+        if not all(field in complaint_data for field in required_fields):
+            logging.error("Eksik şikayet bilgisi")
+            return None
+            
         # Şikayet ID'sini artır
         COMPLAINTS_DATABASE["last_complaint_id"] += 1
         complaint_id = COMPLAINTS_DATABASE["last_complaint_id"]
@@ -397,11 +297,15 @@ def save_complaint(complaint_data):
         complaint = {
             "id": complaint_id,
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "complaint_type": complaint_data["complaint_type"],
+            "description": complaint_data["description"],
             "subscriber_no": complaint_data["subscriber_no"],
             "birth_date": complaint_data["birth_date"],
             "address": complaint_data["address"],
             "status": "Yeni",
-            "notification_sent": True
+            "priority": "Normal",
+            "notification_sent": True,
+            "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         
         # Şikayeti kaydet
@@ -410,7 +314,9 @@ def save_complaint(complaint_data):
         # Şikayetleri dosyaya kaydet
         save_complaints_to_file()
         
+        logging.info(f"Yeni şikayet kaydedildi. ID: {complaint_id}, Tür: {complaint_data['complaint_type']}")
         return complaint_id
+        
     except Exception as e:
         logging.error(f"Şikayet kaydetme hatası: {e}")
         return None
@@ -418,23 +324,62 @@ def save_complaint(complaint_data):
 def save_complaints_to_file():
     """Şikayetleri JSON dosyasına kaydet"""
     try:
-        with open('complaints.json', 'w', encoding='utf-8') as f:
+        complaints_file = Path('complaints.json')
+        with open(complaints_file, 'w', encoding='utf-8') as f:
             json.dump(COMPLAINTS_DATABASE, f, ensure_ascii=False, indent=4)
+        logging.info("Şikayetler dosyaya kaydedildi")
     except Exception as e:
         logging.error(f"Şikayet dosyası kaydetme hatası: {e}")
+        raise  # Hatayı yukarı ilet
 
 def load_complaints_from_file():
     """Şikayetleri JSON dosyasından yükle"""
     try:
-        if os.path.exists('complaints.json'):
-            with open('complaints.json', 'r', encoding='utf-8') as f:
+        complaints_file = Path('complaints.json')
+        if complaints_file.exists():
+            with open(complaints_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 COMPLAINTS_DATABASE.update(data)
+            logging.info(f"Toplam {len(COMPLAINTS_DATABASE['complaints'])} şikayet yüklendi")
+        else:
+            logging.info("Şikayet dosyası bulunamadı. Yeni dosya oluşturulacak.")
     except Exception as e:
         logging.error(f"Şikayet dosyası yükleme hatası: {e}")
+        # Dosya okunamazsa varsayılan yapıyı kullan
+        COMPLAINTS_DATABASE.update({
+            "complaints": [],
+            "last_complaint_id": 0
+        })
 
 # Uygulama başlangıcında şikayetleri yükle
 load_complaints_from_file()
+
+@app.route('/', methods=['GET'])
+def home():
+    """Ana endpoint"""
+    return render_template('index.html')
+
+@app.route('/api/session', methods=['GET', 'OPTIONS'])
+def get_active_session():
+    """Yeni bir session başlat"""
+    if request.method == 'OPTIONS':
+        return jsonify({"status": "success"})
+        
+    new_session_id = user_memory.create_new_session()
+    
+    # Session ID'yi kontrol et
+    if not new_session_id:
+        return jsonify({
+            "error": "Session oluşturulamadı"
+        }), 500
+        
+    # Session bilgilerini döndür
+    return jsonify({
+        "status": "success",
+        "session_id": new_session_id,
+        "chat_endpoint": f"/api/chat/{new_session_id}",
+        "message": "Session başarıyla oluşturuldu"
+    })
 
 @app.route('/api/chat/<session_id>', methods=['POST', 'OPTIONS'])
 def chat_with_mem(session_id):
@@ -611,30 +556,79 @@ def chat_with_mem(session_id):
                 return jsonify({"response": outage_info})
         
         # Su sayacı şikayet sistemi
-        elif "sayaç" in user_message or "arıza" in user_message or context.get("type", "").startswith("meter_complaint"):
+        elif "sayaç" in user_message or "arıza" in user_message or context.get("type") == "meter_complaint":
+            # Yeni şikayet başlat
             if not context.get("type"):
                 user_memory.update_session(session_id, "context", {
                     "type": "meter_complaint",
-                    "step": "waiting_subscriber",
+                    "step": "waiting_complaint_type",
                     "complaint_data": {}
                 })
                 return jsonify({
-                    "response": "Su sayacı şikayetinizi almak için bazı bilgilere ihtiyacım var.\nLütfen 6 haneli abone numaranızı giriniz:",
+                    "response": (
+                        "Su sayacı şikayetinizi almak için lütfen şikayet türünü seçin:\n"
+                        "1. Sayaç çalışmıyor\n"
+                        "2. Sayaç arızalı/bozuk\n"
+                        "3. Sayaç okuma hatası var\n"
+                        "4. Sayaç değişimi istiyorum\n"
+                        "5. Sayaçta fiziksel hasar var\n"
+                        "6. Diğer\n"
+                        "Lütfen seçiminizi 1-6 arasında bir rakam olarak belirtin:"
+                    ),
+                    "expecting": "complaint_type"
+                })
+            
+            current_step = context.get("step")
+            complaint_data = context.get("complaint_data", {})
+            
+            # Şikayet türü bekleniyor
+            if current_step == "waiting_complaint_type":
+                complaint_types = {
+                    "1": "Sayaç çalışmıyor",
+                    "2": "Sayaç arızalı/bozuk",
+                    "3": "Sayaç okuma hatası",
+                    "4": "Sayaç değişim talebi",
+                    "5": "Sayaçta fiziksel hasar",
+                    "6": "Diğer"
+                }
+                
+                if user_message in complaint_types:
+                    complaint_data["complaint_type"] = complaint_types[user_message]
+                    context["complaint_data"] = complaint_data
+                    context["step"] = "waiting_description"
+                    user_memory.update_session(session_id, "context", context)
+                    
+                    return jsonify({
+                        "response": "Lütfen sorunu kısaca açıklayınız:",
+                        "expecting": "description"
+                    })
+                else:
+                    return jsonify({
+                        "response": "Geçersiz seçim. Lütfen 1-6 arasında bir rakam girin:",
+                        "expecting": "complaint_type"
+                    })
+            
+            # Açıklama bekleniyor
+            elif current_step == "waiting_description":
+                complaint_data["description"] = user_message
+                context["complaint_data"] = complaint_data
+                context["step"] = "waiting_subscriber"
+                user_memory.update_session(session_id, "context", context)
+                
+                return jsonify({
+                    "response": "Lütfen 6 haneli abone numaranızı giriniz:",
                     "expecting": "subscriber_no"
                 })
             
-            complaint_context = context.get("complaint_data", {})
-            
             # Abone no bekleniyor
-            if context.get("step") == "waiting_subscriber":
+            elif current_step == "waiting_subscriber":
                 subscriber_no = ''.join(filter(str.isdigit, user_message))
                 if validate_subscriber_no(subscriber_no):
-                    complaint_context["subscriber_no"] = subscriber_no
-                    user_memory.update_session(session_id, "context", {
-                        "type": "meter_complaint",
-                        "step": "waiting_birth_date",
-                        "complaint_data": complaint_context
-                    })
+                    complaint_data["subscriber_no"] = subscriber_no
+                    context["complaint_data"] = complaint_data
+                    context["step"] = "waiting_birth_date"
+                    user_memory.update_session(session_id, "context", context)
+                    
                     return jsonify({
                         "response": "Lütfen doğum tarihinizi YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
                         "expecting": "birth_date"
@@ -646,14 +640,13 @@ def chat_with_mem(session_id):
                     })
             
             # Doğum tarihi bekleniyor
-            elif context.get("step") == "waiting_birth_date":
+            elif current_step == "waiting_birth_date":
                 if validate_date(user_message):
-                    complaint_context["birth_date"] = user_message
-                    user_memory.update_session(session_id, "context", {
-                        "type": "meter_complaint",
-                        "step": "waiting_address",
-                        "complaint_data": complaint_context
-                    })
+                    complaint_data["birth_date"] = user_message
+                    context["complaint_data"] = complaint_data
+                    context["step"] = "waiting_address"
+                    user_memory.update_session(session_id, "context", context)
+                    
                     return jsonify({
                         "response": "Lütfen açık adresinizi giriniz:",
                         "expecting": "address"
@@ -665,24 +658,40 @@ def chat_with_mem(session_id):
                     })
             
             # Adres bekleniyor
-            elif context.get("step") == "waiting_address":
-                complaint_context["address"] = user_message
+            elif current_step == "waiting_address":
+                complaint_data["address"] = user_message
                 
-                # Şikayeti kaydet
-                complaint_id = save_complaint(complaint_context)
-                
-                if complaint_id:
-                    response = (
-                        f"Şikayetiniz başarıyla kaydedildi.\n"
-                        f"Şikayet Numaranız: #{complaint_id}\n"
-                        f"İlgili birimlerimiz en kısa sürede sizinle iletişime geçecektir.\n"
-                        f"Bizi bilgilendirdiğiniz için teşekkür ederiz."
-                    )
+                # Tüm gerekli bilgilerin var olduğunu kontrol et
+                required_fields = ["complaint_type", "description", "subscriber_no", "birth_date", "address"]
+                if all(key in complaint_data for key in required_fields):
+                    # Şikayeti kaydet
+                    complaint_id = save_complaint(complaint_data)
+                    
+                    if complaint_id:
+                        response = (
+                            f"Şikayetiniz başarıyla kaydedildi.\n"
+                            f"Şikayet Numaranız: #{complaint_id}\n"
+                            f"Şikayet Türü: {complaint_data['complaint_type']}\n"
+                            f"İlgili birimlerimiz en kısa sürede sizinle iletişime geçecektir.\n"
+                            f"Bizi bilgilendirdiğiniz için teşekkür ederiz."
+                        )
+                    else:
+                        response = "Şikayetiniz kaydedilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
+                    
+                    # Context'i temizle
+                    user_memory.update_session(session_id, "context", {})
+                    return jsonify({"response": response})
                 else:
-                    response = "Şikayetiniz kaydedilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
-                
-                user_memory.update_session(session_id, "context", {})  # Context'i temizle
-                return jsonify({"response": response})
+                    # Eksik bilgi varsa baştan başlat
+                    user_memory.update_session(session_id, "context", {
+                        "type": "meter_complaint",
+                        "step": "waiting_complaint_type",
+                        "complaint_data": {}
+                    })
+                    return jsonify({
+                        "response": "Bazı bilgiler eksik. Lütfen tekrar başlayalım.\nLütfen şikayet türünü seçin (1-6):",
+                        "expecting": "complaint_type"
+                    })
         
         # Saat sorgusu
         elif any(word in user_message for word in ["saat kaç", "saat", "saat kaç?"]):
@@ -713,5 +722,77 @@ def chat_with_mem(session_id):
             "details": str(e)
         }), 500
 
+def extract_city_from_message(message):
+    """Mesajdan şehir ismini çıkar"""
+    message = message.lower()
+    for city in TURKEY_CITIES:
+        if city in message:
+            return city
+    return None
+
+class ChatbotManager:
+    def __init__(self):
+        self.model_dir = "saved_model"
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.max_length = 512
+        self.confidence_threshold = 0.1
+        self.setup_model()
+        
+    def setup_model(self):
+        try:
+            self.model = AutoModelForSequenceClassification.from_pretrained(
+                self.model_dir
+            ).to(self.device)
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
+            self.model.eval()
+            
+            with open(Path(self.model_dir) / 'intent_labels.json', 'r', encoding='utf-8') as f:
+                self.intent_labels = json.load(f)
+                
+            with open(Path(self.model_dir) / 'responses.json', 'r', encoding='utf-8') as f:
+                self.responses = json.load(f)
+                
+            logging.info("Chatbot modeli başarıyla yüklendi")
+        except Exception as e:
+            logging.error(f"Chatbot modeli yüklenirken hata: {e}")
+            raise
+            
+    def predict(self, text):
+        try:
+            inputs = self.tokenizer(
+                text,
+                truncation=True,
+                padding=True,
+                max_length=self.max_length,
+                return_tensors="pt"
+            ).to(self.device)
+            
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+                probabilities = torch.nn.functional.softmax(outputs.logits, dim=1)[0]
+                confidence, predicted_class = torch.max(probabilities, dim=0)
+                
+                if confidence.item() >= self.confidence_threshold:
+                    intent = self.intent_labels[predicted_class.item()]
+                    response = self.get_response(intent)
+                    return response, intent, confidence.item()
+                    
+                return None, None, confidence.item()
+                
+        except Exception as e:
+            logging.error(f"Tahmin hatası: {e}")
+            return None, None, 0.0
+            
+    def get_response(self, intent):
+        try:
+            available_responses = self.responses.get(intent, ["Üzgünüm, bu konuda yardımcı olamıyorum."])
+            return available_responses[0]
+        except Exception as e:
+            logging.error(f"Yanıt seçme hatası: {e}")
+            return "Bir hata oluştu."
+
+# Global instances
+chatbot = ChatbotManager()
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000) 

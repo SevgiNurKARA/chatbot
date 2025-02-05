@@ -1,0 +1,40 @@
+{
+    "complaints": [
+        {
+            "id": 1,
+            "timestamp": "2025-02-04 11:23:34",
+            "subscriber_no": "123456",
+            "birth_date": "1990-01-31",
+            "address": "esenler mah. iniş sok. no:32",
+            "status": "Yeni",
+            "notification_sent": true
+        },
+        {
+            "id": 2,
+            "timestamp": "2025-02-05 09:47:22",
+            "complaint_type": "Sayaç çalışmıyor",
+            "description": "sayaç endeksi dönmüyor",
+            "subscriber_no": "123456",
+            "birth_date": "2002-03-01",
+            "address": "dkfklsdmflksdflsflşskşd",
+            "status": "Yeni",
+            "priority": "Normal",
+            "notification_sent": true,
+            "last_update": "2025-02-05 09:47:22"
+        },
+        {
+            "id": 3,
+            "timestamp": "2025-02-05 09:49:01",
+            "complaint_type": "Sayaç çalışmıyor",
+            "description": "5",
+            "subscriber_no": "123456",
+            "birth_date": "1990-02-13",
+            "address": "lfsşlfksşdlkfsşdl",
+            "status": "Yeni",
+            "priority": "Normal",
+            "notification_sent": true,
+            "last_update": "2025-02-05 09:49:01"
+        }
+    ],
+    "last_complaint_id": 3
+}
