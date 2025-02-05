@@ -16,20 +16,86 @@
             font-family: 'Inter', sans-serif;
             background: #f5f7fb;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
+            position: relative;
         }
 
+        /* Chat Baloncuğu */
+        .chat-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #007AFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .chat-bubble:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-bubble-icon {
+            color: white;
+            font-size: 24px;
+        }
+
+        /* Yardım Balonu */
+        .help-tooltip {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            color: #333;
+            display: none;
+            animation: fadeIn 0.3s ease;
+            z-index: 999;
+        }
+
+        .help-tooltip.show {
+            display: block;
+        }
+
+        .help-tooltip:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 24px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+
+        /* Chat Container */
         .chat-container {
-            max-width: 1200px;
-            margin: 2rem auto;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 380px;
+            height: 600px;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-            display: flex;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            display: none;
             flex-direction: column;
-            height: calc(100vh - 4rem);
-            width: 95%;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .chat-container.show {
+            display: flex;
         }
 
         .chat-header {
@@ -37,12 +103,24 @@
             border-bottom: 1px solid #eee;
             background: #fff;
             border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .chat-header h1 {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: #1a1a1a;
             font-weight: 600;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 8px;
         }
 
         .chat-messages {
@@ -97,6 +175,8 @@
             transition: border-color 0.3s ease;
             outline: none;
             resize: none;
+            max-height: 100px;
+            min-height: 44px;
         }
 
         .chat-input:focus {
@@ -104,7 +184,7 @@
         }
 
         .send-button {
-            padding: 1rem 2rem;
+            padding: 0.8rem 1.5rem;
             background: #007AFF;
             color: white;
             border: none;
@@ -112,15 +192,26 @@
             font-size: 1rem;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            white-space: nowrap;
         }
 
         .send-button:hover {
             background: #0056b3;
         }
 
-        .send-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: #F2F2F7;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .typing-indicator.active {
+            display: block;
         }
 
         @keyframes fadeIn {
@@ -134,38 +225,57 @@
             }
         }
 
-        .typing-indicator {
-            display: none;
-            align-self: flex-start;
-            background: #F2F2F7;
-            padding: 1rem;
-            border-radius: 12px;
-            margin: 0.5rem 0;
-            color: #666;
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .typing-indicator.active {
-            display: block;
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 480px) {
             .chat-container {
-                margin: 0;
-                height: 100vh;
                 width: 100%;
+                height: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+
+            .chat-header {
                 border-radius: 0;
             }
 
             .message {
                 max-width: 85%;
             }
+
+            .chat-bubble {
+                bottom: 20px;
+                right: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="chat-container">
+    <!-- Yardım Balonu -->
+    <div class="help-tooltip" id="helpTooltip">
+        Yardıma ihtiyacınız var mı? 🤔
+    </div>
+
+    <!-- Chat Baloncuğu -->
+    <div class="chat-bubble" id="chatBubble">
+        <div class="chat-bubble-icon">💬</div>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container" id="chatContainer">
         <div class="chat-header">
             <h1>Akıllı Asistan</h1>
+            <button class="close-button" id="closeChat">&times;</button>
         </div>
         <div class="chat-messages" id="chatMessages">
             <div class="message bot-message">
@@ -190,10 +300,33 @@
 
     <script>
         let sessionId = null;
+        const chatBubble = document.getElementById('chatBubble');
+        const helpTooltip = document.getElementById('helpTooltip');
+        const chatContainer = document.getElementById('chatContainer');
+        const closeChat = document.getElementById('closeChat');
         const chatMessages = document.getElementById('chatMessages');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
         const typingIndicator = document.getElementById('typingIndicator');
+
+        // Yardım balonunu göster
+        setTimeout(() => {
+            helpTooltip.classList.add('show');
+        }, 2000);
+
+        // Chat baloncuğuna tıklandığında
+        chatBubble.addEventListener('click', () => {
+            chatContainer.classList.add('show');
+            helpTooltip.classList.remove('show');
+            if (!sessionId) {
+                initializeSession();
+            }
+        });
+
+        // Kapatma butonuna tıklandığında
+        closeChat.addEventListener('click', () => {
+            chatContainer.classList.remove('show');
+        });
 
         // Session ID'yi al veya yeni oturum başlat
         async function initializeSession() {
@@ -297,6 +430,12 @@
                 case 'method_choice':
                     placeholder = '1 veya 2 yazın';
                     break;
+                case 'complaint_type':
+                    placeholder = 'Şikayet türü için 1-6 arası bir rakam girin';
+                    break;
+                case 'description':
+                    placeholder = 'Sorununuzu kısaca açıklayın';
+                    break;
                 default:
                     placeholder = 'Mesajınızı yazın...';
             }
@@ -320,7 +459,7 @@
         // Textarea yüksekliğini otomatik ayarla
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
         });
 
         // Enter tuşu ile gönderme (Shift + Enter için yeni satır)
@@ -332,9 +471,6 @@
         });
 
         sendButton.addEventListener('click', sendMessage);
-
-        // Sayfa yüklendiğinde session'ı başlat
-        window.addEventListener('load', initializeSession);
 
         // Session kontrolü ve yenileme
         setInterval(async function() {

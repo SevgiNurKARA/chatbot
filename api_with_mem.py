@@ -94,6 +94,8 @@ class UserMemory:
     def __init__(self):
         self.sessions = {}  # Tüm sessionları tutacak sözlük
         self.current_session_id = None
+        self.chat_history_dir = Path('chat_histories')  # Konuşma geçmişleri için klasör
+        self.chat_history_dir.mkdir(exist_ok=True)  # Klasörü oluştur
     
     def create_new_session(self):
         """Yeni bir session oluştur"""
@@ -108,8 +110,10 @@ class UserMemory:
             # Yeni session oluştur
             self.sessions[session_id] = {
                 "context": {},
+                "chat_history": [],
                 "last_interaction": datetime.now(),
-                "created_at": datetime.now()
+                "created_at": datetime.now(),
+                "user_id": f"user_{session_id}"  # Her session için benzersiz kullanıcı ID'si
             }
             
             self.current_session_id = session_id
@@ -121,11 +125,124 @@ class UserMemory:
             logging.error(f"Session oluşturma hatası: {e}")
             return None
     
+    def add_to_chat_history(self, session_id, message, sender):
+        """Konuşma geçmişine mesaj ekle ve dosyaya kaydet"""
+        if session_id in self.sessions:
+            # Mesajı geçmişe ekle
+            chat_history = self.sessions[session_id].get("chat_history", [])
+            
+            # Son mesajı kontrol et ve tekrarı önle
+            if not chat_history or not (chat_history[-1]["message"] == message and chat_history[-1]["sender"] == sender):
+                message_data = {
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "sender": sender,
+                    "message": message,
+                    "message_id": str(uuid.uuid4())[:8]  # Benzersiz mesaj ID'si
+                }
+                chat_history.append(message_data)
+                self.sessions[session_id]["chat_history"] = chat_history
+                
+                # Son etkileşim zamanını güncelle
+                self.sessions[session_id]["last_interaction"] = datetime.now()
+                
+                # Konuşma geçmişini dosyaya kaydet
+                self._save_chat_history(session_id)
+                return True
+            return False
+        return False
+    
+    def _save_chat_history(self, session_id):
+        """Konuşma geçmişini dosyaya kaydet"""
+        try:
+            if session_id in self.sessions:
+                session_data = self.sessions[session_id]
+                user_id = session_data["user_id"]
+                
+                # Kullanıcıya özel klasör oluştur
+                user_dir = self.chat_history_dir / user_id
+                user_dir.mkdir(exist_ok=True)
+                
+                # Konuşma geçmişi dosyası
+                history_file = user_dir / f"chat_history_{datetime.now().strftime('%Y%m%d')}.json"
+                
+                # Mevcut geçmişi yükle veya yeni oluştur
+                history_data = {
+                    "user_id": user_id,
+                    "session_id": session_id,
+                    "messages": []
+                }
+                
+                # Mevcut mesaj ID'lerini takip etmek için set oluştur
+                existing_message_ids = set()
+                
+                if history_file.exists():
+                    with open(history_file, 'r', encoding='utf-8') as f:
+                        existing_data = json.load(f)
+                        # Mevcut mesajları ID'lerine göre kontrol et
+                        existing_message_ids = {msg.get("message_id") for msg in existing_data.get("messages", [])}
+                        history_data["messages"] = existing_data.get("messages", [])
+                
+                # Yeni mesajları ekle (tekrar kontrolü yaparak)
+                for message in session_data["chat_history"]:
+                    if "message_id" in message and message["message_id"] not in existing_message_ids:
+                        history_data["messages"].append(message)
+                        existing_message_ids.add(message["message_id"])
+                
+                # Dosyaya kaydet
+                with open(history_file, 'w', encoding='utf-8') as f:
+                    json.dump(history_data, f, ensure_ascii=False, indent=4)
+                
+                logging.info(f"Konuşma geçmişi kaydedildi: {history_file}")
+        except Exception as e:
+            logging.error(f"Konuşma geçmişi kaydetme hatası: {e}")
+    
+    def get_user_chat_history(self, user_id, date=None):
+        """Belirli bir kullanıcının konuşma geçmişini getir"""
+        try:
+            user_dir = self.chat_history_dir / user_id
+            if not user_dir.exists():
+                return []
+            
+            # Belirli bir tarih için geçmiş
+            if date:
+                history_file = user_dir / f"chat_history_{date}.json"
+                if history_file.exists():
+                    with open(history_file, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                        # Mesajları benzersiz ID'lere göre filtrele
+                        seen_message_ids = set()
+                        unique_messages = []
+                        for msg in data.get("messages", []):
+                            msg_id = msg.get("message_id")
+                            if msg_id and msg_id not in seen_message_ids:
+                                unique_messages.append(msg)
+                                seen_message_ids.add(msg_id)
+                        return unique_messages
+                return []
+            
+            # Tüm geçmiş
+            all_messages = []
+            seen_message_ids = set()
+            
+            for history_file in sorted(user_dir.glob("chat_history_*.json")):
+                with open(history_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    for msg in data.get("messages", []):
+                        msg_id = msg.get("message_id")
+                        if msg_id and msg_id not in seen_message_ids:
+                            all_messages.append(msg)
+                            seen_message_ids.add(msg_id)
+            
+            return all_messages
+            
+        except Exception as e:
+            logging.error(f"Konuşma geçmişi getirme hatası: {e}")
+            return []
+    
     def get_session(self, session_id):
         """Belirli bir session'ı getir"""
         session = self.sessions.get(session_id)
         if session:
-            # Son etkileşim zamanını güncelle
             session["last_interaction"] = datetime.now()
         return session
     
@@ -150,6 +267,8 @@ class UserMemory:
         if last_interaction:
             time_diff = (datetime.now() - last_interaction).total_seconds() / 60
             if time_diff > 30:
+                # Son konuşma geçmişini kaydet
+                self._save_chat_history(session_id)
                 del self.sessions[session_id]
                 return False
                 
@@ -403,6 +522,10 @@ def chat_with_mem(session_id):
             }), 400
             
         user_message = data.get('message', '').strip().lower()
+        
+        # Kullanıcı mesajını geçmişe ekle
+        user_memory.add_to_chat_history(session_id, user_message, "user")
+        
         session_data = user_memory.get_session(session_id)
         context = session_data.get("context", {})
         
@@ -493,6 +616,7 @@ def chat_with_mem(session_id):
                         response = "Bu bilgilerle eşleşen fatura bulunamadı."
                     
                     user_memory.update_session(session_id, "context", {})  # Context'i temizle
+                    user_memory.add_to_chat_history(session_id, response, "bot")
                     return jsonify({"response": response})
                 else:
                     return jsonify({
@@ -504,6 +628,7 @@ def chat_with_mem(session_id):
         elif any(word in user_message for word in ["döviz", "kur", "euro", "dolar", "sterlin", "usd", "eur", "gbp"]):
             exchange_info = get_exchange_rate()
             user_memory.update_session(session_id, "context", {})  # Context'i temizle
+            user_memory.add_to_chat_history(session_id, exchange_info, "bot")
             return jsonify({"response": exchange_info})
         
         # Hava durumu sorgusu
@@ -512,6 +637,7 @@ def chat_with_mem(session_id):
             if city:
                 weather_info = get_weather(city)
                 user_memory.update_session(session_id, "context", {})  # Context'i temizle
+                user_memory.add_to_chat_history(session_id, weather_info, "bot")
                 return jsonify({"response": weather_info})
             else:
                 user_memory.update_session(session_id, "context", {
@@ -529,6 +655,7 @@ def chat_with_mem(session_id):
             if city:
                 weather_info = get_weather(city)
                 user_memory.update_session(session_id, "context", {})  # Context'i temizle
+                user_memory.add_to_chat_history(session_id, weather_info, "bot")
                 return jsonify({"response": weather_info})
             else:
                 return jsonify({
@@ -553,6 +680,7 @@ def chat_with_mem(session_id):
                 district = user_message.strip()
                 outage_info = check_water_outage(district)
                 user_memory.update_session(session_id, "context", {})  # Context'i temizle
+                user_memory.add_to_chat_history(session_id, outage_info, "bot")
                 return jsonify({"response": outage_info})
         
         # Su sayacı şikayet sistemi
@@ -680,6 +808,7 @@ def chat_with_mem(session_id):
                     
                     # Context'i temizle
                     user_memory.update_session(session_id, "context", {})
+                    user_memory.add_to_chat_history(session_id, response, "bot")
                     return jsonify({"response": response})
                 else:
                     # Eksik bilgi varsa baştan başlat
@@ -704,6 +833,7 @@ def chat_with_mem(session_id):
         else:
             response, intent, confidence = chatbot.predict(user_message.upper())
             if response and confidence >= chatbot.confidence_threshold:
+                user_memory.add_to_chat_history(session_id, response, "bot")
                 return jsonify({
                     "response": response,
                     "intent": intent,
@@ -721,6 +851,20 @@ def chat_with_mem(session_id):
             "error": "Bir hata oluştu",
             "details": str(e)
         }), 500
+
+# Konuşma geçmişini getirmek için yeni endpoint
+@app.route('/api/chat/<session_id>/history', methods=['GET'])
+def get_chat_history(session_id):
+    """Konuşma geçmişini getir"""
+    if not user_memory.is_valid_session(session_id):
+        return jsonify({
+            "error": "Geçersiz veya süresi dolmuş oturum"
+        }), 401
+    
+    chat_history = user_memory.get_user_chat_history(session_id)
+    return jsonify({
+        "chat_history": chat_history
+    })
 
 def extract_city_from_message(message):
     """Mesajdan şehir ismini çıkar"""
@@ -793,6 +937,19 @@ class ChatbotManager:
 
 # Global instances
 chatbot = ChatbotManager()
+
+# Konuşma geçmişini getirmek için yeni endpoint'ler
+@app.route('/api/chat/history/user/<user_id>', methods=['GET'])
+def get_user_history(user_id):
+    """Kullanıcının tüm konuşma geçmişini getir"""
+    date = request.args.get('date')  # YYYYMMDD formatında tarih parametresi
+    
+    chat_history = user_memory.get_user_chat_history(user_id, date)
+    return jsonify({
+        "user_id": user_id,
+        "date": date,
+        "chat_history": chat_history
+    })
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000) 
