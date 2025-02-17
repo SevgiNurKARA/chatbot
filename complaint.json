@@ -1,0 +1,17 @@
+{
+    "complaints": [
+        {
+            "id": 1,
+            "timestamp": "2025-02-16 15:26:08",
+            "complaint_type": "Saya\u00c3\u00a7 ar\u00c4\u00b1zal\u00c4\u00b1/bozuk",
+            "description": "sayac\u00c4\u00b1m bozuk",
+            "subscriber_no": "123456",
+            "birth_date": "2002-01-03",
+            "address": "eksgksdjgksdjg",
+            "status": "\u00c7\u00f6z\u00fcld\u00fc",
+            "priority": "Normal",
+            "notification_sent": true,
+            "last_update": "2025-02-16 15:26:08"
+        }
+    ]
+}

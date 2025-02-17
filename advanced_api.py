@@ -465,27 +465,49 @@ def save_complaints_to_file():
         logging.error(f"Şikayet dosyası kaydetme hatası: {e}")
         raise  # Hatayı yukarı ilet
 
-def load_complaints_from_file():
-    """Şikayetleri JSON dosyasından yükle"""
-    try:
-        complaints_file = Path('complaints.json')
-        if complaints_file.exists():
-            with open(complaints_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                COMPLAINTS_DATABASE.update(data)
-            logging.info(f"Toplam {len(COMPLAINTS_DATABASE['complaints'])} şikayet yüklendi")
-        else:
-            logging.info("Şikayet dosyası bulunamadı. Yeni dosya oluşturulacak.")
-    except Exception as e:
-        logging.error(f"Şikayet dosyası yükleme hatası: {e}")
-        # Dosya okunamazsa varsayılan yapıyı kullan
-        COMPLAINTS_DATABASE.update({
-            "complaints": [],
-            "last_complaint_id": 0
-        })
+def load_complaints_from_json(file_path='complaint.json'):
+    """
+    Load complaints from a JSON file.
+    
+    :param file_path: Path to the JSON file containing complaints.
+    :return: List of complaints.
+    """
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    
+    # Erişilecek anahtar: "complaints"
+    complaints = data.get("complaints", [])
+    return complaints
 
-# Uygulama başlangıcında şikayetleri yükle
-load_complaints_from_file()
+def get_complaints_for_dashboard():
+    """
+    Retrieve complaints to be displayed on the dashboard.
+    
+    :return: List of complaints formatted for the dashboard.
+    """
+    complaints = load_complaints_from_json('complaint.json')
+    formatted_complaints = format_complaints_for_dashboard(complaints)
+    return formatted_complaints
+
+def format_complaints_for_dashboard(complaints):
+    """
+    Format complaints for display on the dashboard.
+    
+    :param complaints: List of complaints.
+    :return: Formatted list of complaints.
+    """
+    return [{"id": c["id"], "message": c["description"], "timestamp": c["timestamp"], "subscriber_no": c["subscriber_no"], "address": c["address"], "complaint_type": c["complaint_type"], "status": c["status"]} for c in complaints]
+
+@app.route('/api/complaints', methods=['GET'])
+def api_get_complaints():
+    """
+    API endpoint to get complaints for the dashboard.
+    """
+    complaints = get_complaints_for_dashboard()
+    return jsonify(complaints)
 
 @app.route('/', methods=['GET'])
 def home():
@@ -599,11 +621,6 @@ def chat_with_mem(session_id):
                     return jsonify({
                         "response": "Lütfen doğum tarihinizi YYYY-AA-GG formatında giriniz (Örnek: 1990-01-31):",
                         "expecting": "birth_date"
-                    })
-                else:
-                    return jsonify({
-                        "response": "Geçersiz abone numarası. Lütfen 6 haneli abone numaranızı giriniz:",
-                        "expecting": "subscriber_no"
                     })
             
             # Doğum tarihi bekleniyor
@@ -1032,6 +1049,35 @@ def get_user_history(user_id):
         "date": date,
         "chat_history": chat_history
     })
+
+@app.route('/api/complaints/<int:complaint_id>/resolve', methods=['POST'])
+def resolve_complaint(complaint_id):
+    """
+    API endpoint to mark a complaint as resolved.
+    """
+    complaints = load_complaints_from_json('complaints.json')
+    for complaint in complaints:
+        if complaint['id'] == complaint_id:
+            complaint['status'] = 'Çözüldü'
+            break
+    else:
+        return jsonify({"error": "Complaint not found"}), 404
+
+    # Save the updated complaints back to the JSON file
+    save_complaints_to_json(complaints)
+    return jsonify({"message": "Complaint resolved successfully"})
+
+def save_complaints_to_json(complaints, file_path='solved_complaint.json'):
+    """
+    Save complaints to a JSON file.
+    
+    :param complaints: List of complaints.
+    :param file_path: Path to the JSON file.
+    """
+    import json
+    
+    with open(file_path, 'w') as file:
+        json.dump({"complaints": complaints}, file, indent=4)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
