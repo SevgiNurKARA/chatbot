@@ -1,0 +1,66 @@
+.EnterData-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.EnterData-inputs-part{
+    margin-left: 100px;
+    margin-top: 50px;
+   display: flex;
+   flex-direction: row;
+    height: 70%;
+    width: 70%;
+}
+.EnterData-İnputs-part-colums{
+    width: 50%;
+    height: 100%;
+   
+    display: flex;
+    flex-direction: column;
+
+}
+.EnterData-inputs-part-parts{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+}
+.EnterData-input-part-titels{
+
+}
+
+.EnterData-input-box-title{
+    width: 50%;
+    margin-left: 20px;
+    display: block;
+    vertical-align: top; 
+    box-sizing: border-box;
+}
+.EnterData-input-box-questions{
+    width: 50%;
+    margin-left: 30px;
+    height: 200px;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    vertical-align: top; 
+}
+.EnterData-input-box-answers{
+    width: 50%;
+    margin-left: 20px;
+    height: 150px;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+.EnterData-input-buttons{
+    width: 150px;
+    height: 30px;
+    margin-top: auto;
+    background-color:aqua;
+    color: white;
+}
+.EnterData-input-buttons:hover {
+    background-color: blue;
+    color: white;
+}
