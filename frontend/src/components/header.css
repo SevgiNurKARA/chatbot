@@ -49,7 +49,9 @@
     color: black;
     border-style: none;
     font-size: large;
+    cursor: pointer;
 }
 .buttonHeader:hover{
     color: blue;
+    font-size: larger;
 }
