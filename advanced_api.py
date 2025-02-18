@@ -9,6 +9,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import xml.etree.ElementTree as ET
 import os
+import random
 
 app = Flask(__name__)
 
@@ -975,61 +976,104 @@ def get_meter_info(subscriber_no):
 
 class ChatbotManager:
     def __init__(self):
-        self.model_dir = "saved_model"
+        self.model_name = "bert-base-uncased"  # veya kullanmak istediğiniz model
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.max_length = 512
         self.confidence_threshold = 0.1
+        
+        # Chatbot veri dosyası yolu
+        self.chatbot_data_file = Path(__file__).parent / "chatbot_data.json"
+        self.chatbot_data = None
+        
+        # Chatbot verilerini yükle
+        self.load_chatbot_data()
         self.setup_model()
         
+    def load_chatbot_data(self):
+        """Chatbot verilerini JSON dosyasından yükle"""
+        try:
+            if os.path.exists(self.chatbot_data_file):
+                with open(self.chatbot_data_file, 'r', encoding='utf-8') as f:
+                    self.chatbot_data = json.load(f)
+                logging.info("Chatbot verileri başarıyla yüklendi")
+            else:
+                # Yeni format
+                self.chatbot_data = {
+                    "intents": [
+                        {
+                            "intent": "",
+                            "examples": [],
+                            "responses": []
+                        }
+                    ]
+                }
+                self.save_chatbot_data()
+        except Exception as e:
+            logging.error(f"Chatbot verileri yüklenirken hata: {e}")
+            raise
+            
+    def save_chatbot_data(self):
+        """Chatbot verilerini JSON dosyasına kaydet"""
+        try:
+            with open(self.chatbot_data_file, 'w', encoding='utf-8') as f:
+                json.dump(self.chatbot_data, f, ensure_ascii=False, indent=4)
+            logging.info("Chatbot verileri başarıyla kaydedildi")
+        except Exception as e:
+            logging.error(f"Chatbot verileri kaydedilirken hata: {e}")
+            raise
+            
+    def update_chatbot_data(self, new_data):
+        """Chatbot verilerini güncelle"""
+        try:
+            # Yeni verilerin formatını kontrol et
+            if "intents" not in new_data:
+                raise ValueError("Geçersiz veri formatı: 'intents' alanı gerekli")
+
+            for intent_data in new_data["intents"]:
+                if not all(key in intent_data for key in ["intent", "examples", "responses"]):
+                    raise ValueError("Her intent için 'intent', 'examples' ve 'responses' alanları gerekli")
+                
+                if not isinstance(intent_data["examples"], list) or not isinstance(intent_data["responses"], list):
+                    raise ValueError("'examples' ve 'responses' liste formatında olmalı")
+
+            # Verileri güncelle
+            self.chatbot_data = new_data
+            
+            # Değişiklikleri kaydet
+            self.save_chatbot_data()
+            
+            logging.info("Chatbot verileri başarıyla güncellendi")
+            return True
+        except Exception as e:
+            logging.error(f"Chatbot verileri güncellenirken hata: {e}")
+            return False
+            
     def setup_model(self):
         try:
-            self.model = AutoModelForSequenceClassification.from_pretrained(
-                self.model_dir
-            ).to(self.device)
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
+            self.model = AutoModelForSequenceClassification.from_pretrained(self.model_name).to(self.device)
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
             self.model.eval()
             
-            with open(Path(self.model_dir) / 'intent_labels.json', 'r', encoding='utf-8') as f:
-                self.intent_labels = json.load(f)
-                
-            with open(Path(self.model_dir) / 'responses.json', 'r', encoding='utf-8') as f:
-                self.responses = json.load(f)
-                
+            # Intent etiketlerini chatbot verilerinden al
+            self.intent_labels = [intent["intent"] for intent in self.chatbot_data["intents"]]
+            
             logging.info("Chatbot modeli başarıyla yüklendi")
+            
         except Exception as e:
             logging.error(f"Chatbot modeli yüklenirken hata: {e}")
             raise
             
-    def predict(self, text):
-        try:
-            inputs = self.tokenizer(
-                text,
-                truncation=True,
-                padding=True,
-                max_length=self.max_length,
-                return_tensors="pt"
-            ).to(self.device)
-            
-            with torch.no_grad():
-                outputs = self.model(**inputs)
-                probabilities = torch.nn.functional.softmax(outputs.logits, dim=1)[0]
-                confidence, predicted_class = torch.max(probabilities, dim=0)
-                
-                if confidence.item() >= self.confidence_threshold:
-                    intent = self.intent_labels[predicted_class.item()]
-                    response = self.get_response(intent)
-                    return response, intent, confidence.item()
-                    
-                return None, None, confidence.item()
-                
-        except Exception as e:
-            logging.error(f"Tahmin hatası: {e}")
-            return None, None, 0.0
-            
     def get_response(self, intent):
+        """Belirli bir intent için yanıt seç"""
         try:
-            available_responses = self.responses.get(intent, ["Üzgünüm, bu konuda yardımcı olamıyorum."])
-            return available_responses[0]
+            # İlgili intent'i bul
+            for intent_data in self.chatbot_data["intents"]:
+                if intent_data["intent"].lower() == intent.lower():
+                    # Yanıtlardan rastgele birini seç
+                    if intent_data["responses"]:
+                        return random.choice(intent_data["responses"])
+            
+            return "Üzgünüm, bu konuda size yardımcı olamıyorum."
         except Exception as e:
             logging.error(f"Yanıt seçme hatası: {e}")
             return "Bir hata oluştu."
@@ -1078,6 +1122,24 @@ def save_complaints_to_json(complaints, file_path='solved_complaint.json'):
     
     with open(file_path, 'w') as file:
         json.dump({"complaints": complaints}, file, indent=4)
+
+@app.route('/api/chatbot/data', methods=['GET', 'PUT'])
+def manage_chatbot_data():
+    """Chatbot verilerini yönet"""
+    if request.method == 'GET':
+        # Mevcut chatbot verilerini döndür
+        return jsonify(chatbot.chatbot_data)
+        
+    elif request.method == 'PUT':
+        # Yeni chatbot verilerini al ve güncelle
+        try:
+            new_data = request.json
+            if chatbot.update_chatbot_data(new_data):
+                return jsonify({"message": "Chatbot verileri başarıyla güncellendi"})
+            else:
+                return jsonify({"error": "Chatbot verileri güncellenirken hata oluştu"}), 500
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
