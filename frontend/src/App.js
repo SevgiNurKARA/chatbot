@@ -4,6 +4,8 @@ import Header from './components/header';
 import './App.css';
 import Home from './components/Home';
 import EnterData from './components/EnterData';
+import LogViewer from './components/LogViewer';
+
 const App = () => {
   return (
     <Router>
@@ -11,6 +13,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/data-girisi" element={<EnterData />} />
+        <Route path="/logs" element={<LogViewer />} />
         {/*
         <Route path="/dashboard" element={<Dashboard />} />
 

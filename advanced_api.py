@@ -26,7 +26,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('api.log'),
+        logging.FileHandler('api.log', encoding='utf-8', mode='a'),
         logging.StreamHandler()
     ]
 )
@@ -1140,6 +1140,40 @@ def manage_chatbot_data():
                 return jsonify({"error": "Chatbot verileri güncellenirken hata oluştu"}), 500
         except Exception as e:
             return jsonify({"error": str(e)}), 400
+
+@app.route('/api/logs', methods=['GET'])
+def get_logs():
+    """API endpoint to get system logs"""
+    try:
+        # 'utf-8' yerine 'latin-1' veya 'iso-8859-9' encoding kullan
+        with open('api.log', 'r', encoding='latin-1') as f:
+            # Log satırlarını parse et
+            logs = []
+            for line in f:
+                try:
+                    # Log formatı: "2024-02-18 13:05:04,784 - ERROR - Chatbot modeli yüklenirken hata"
+                    parts = line.strip().split(' - ', 2)
+                    if len(parts) == 3:
+                        timestamp, level, message = parts
+                        # Unicode dönüşümü yap
+                        message = message.encode('latin-1').decode('utf-8', errors='ignore')
+                        logs.append({
+                            'timestamp': timestamp,
+                            'level': level.strip(),
+                            'message': message.strip()
+                        })
+                except Exception as e:
+                    logging.error(f"Log satırı parse edilemedi: {str(e)}")
+                    continue
+                    
+            # Logları tersine çevir (en yeniler üstte)
+            logs.reverse()
+            return jsonify(logs)
+    except FileNotFoundError:
+        return jsonify({"error": "Log dosyası bulunamadı"}), 404
+    except Exception as e:
+        logging.error(f"Loglar okunurken hata: {str(e)}")
+        return jsonify({"error": "Loglar okunurken bir hata oluştu"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

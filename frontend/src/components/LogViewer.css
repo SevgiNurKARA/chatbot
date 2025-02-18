@@ -1,0 +1,80 @@
+.log-viewer-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.log-list {
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.log-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    gap: 15px;
+    font-family: monospace;
+}
+
+.log-item:last-child {
+    border-bottom: none;
+}
+
+.log-timestamp {
+    color: #666;
+    min-width: 180px;
+}
+
+.log-level {
+    min-width: 70px;
+    font-weight: bold;
+}
+
+.log-level.ERROR {
+    color: #dc3545;
+}
+
+.log-level.WARNING {
+    color: #ffc107;
+}
+
+.log-level.INFO {
+    color: #17a2b8;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+    color: #666;
+}
+
+.error {
+    color: #dc3545;
+    text-align: center;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    margin: 20px;
+}
+
+.no-logs {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+}
+
+.log-item.error {
+    background-color: #fff5f5;
+}
+
+.log-item.warning {
+    background-color: #fffbf0;
+}
+
+.log-item.info {
+    background-color: #f0f7ff;
+} 

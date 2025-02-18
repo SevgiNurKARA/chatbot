@@ -23,14 +23,13 @@ const Header = () => {
         <button className="buttonHeader" onClick={() => navigateTo('/')}> Ana sayfa</button>
         <button className="buttonHeader" onClick={() => navigateTo('/data-girisi')}> Data girişi</button>
         <button className="buttonHeader" onClick={() => navigateTo('/dashboard')}> Dashboard</button>
-        <button className="buttonHeader" onClick={() => navigateTo('/kullanici')}> Kullanıcı</button>
+        <button className="buttonHeader" onClick={() => navigateTo('/logs')}> Sistem Logları</button>
         <button className="buttonHeader" onClick={() => navigateTo('/kullanici')}> Kullanıcı</button>
       </div>
       <div className="logo-parts">
-      
-      <img className='logoPartsLogos' src={BenimŞehrim} alt="logo" />
-      <img className='logoPartsLogos' src={KonyaBüyükşehirBelediyesi} alt="logo" />
-      <img className='logoPartsLogos' src={koskiLogo} alt="logo" />
+        <img className='logoPartsLogos' src={BenimŞehrim} alt="logo" />
+        <img className='logoPartsLogos' src={KonyaBüyükşehirBelediyesi} alt="logo" />
+        <img className='logoPartsLogos' src={koskiLogo} alt="logo" />
       </div>
     </header>
   );
