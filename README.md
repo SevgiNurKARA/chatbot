@@ -47,20 +47,32 @@ Proje üç ana bileşenden oluşmaktadır:
 
 ### Gereksinimler
 
+**Backend (Python):**
+```bash
+# Tüm Python bağımlılıklarını yüklemek için
+pip install -r requirements.txt
 ```
-# Backend
-torch
-transformers
-scikit-learn
-datasets
-numpy
-flask
 
-# Frontend
-react
-react-router-dom
-node.js (v14+)
+**Frontend (Node.js):**
+- Node.js (v14+)
+- npm veya yarn
+
+Frontend bağımlılıkları için:
+```bash
+cd frontend
+npm install
 ```
+
+**Detaylı Bağımlılıklar:**
+- Python 3.8+
+- torch>=1.12.0
+- transformers>=4.20.0
+- scikit-learn>=1.0.0
+- datasets>=2.0.0
+- flask>=2.0.0
+- numpy>=1.21.0
+- React 19.0.0
+- react-router-dom 7.1.5
 
 ### Model Eğitimi
 
